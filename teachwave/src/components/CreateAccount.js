@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
 import loginImage from './image/login.jpg';
@@ -20,17 +22,17 @@ const CreateAccount = () => {
     try {
       if (isRegister) {
         if (password !== confirmPassword) {
-          alert('Passwords do not match');
+          toast.error('Passwords do not match');
           return;
         }
         await axios.post('http://localhost:5000/register', { email, password });
-        alert('Registration successful');
+        toast.success('Registration successful');
       } else {
         await axios.post('http://localhost:5000/login', { email, password });
-        alert('Login successful');
+        toast.success('Login successful');
       }
     } catch (error) {
-      alert('Error: ' + error.response.data.message);
+      toast.error('Error: ' + (error.response?.data.message || 'An unexpected error occurred'));
     }
   };
 
@@ -113,6 +115,7 @@ const CreateAccount = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+      <ToastContainer />
     </div>
   );
 };
