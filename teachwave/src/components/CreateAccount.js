@@ -29,17 +29,15 @@ const CreateAccount = () => {
         }
         await axios.post('http://localhost:5000/register', { username, password });
         toast.success('Registration successful');
-        // After registration, you may want to redirect to the login page or login directly
-        // navigate('/login'); // Uncomment this line if you have a login page to redirect to
+        // Uncomment if you want to redirect after registration
+        // navigate('/login');
       } else {
         const response = await axios.post('http://localhost:5000/login', { username, password });
         const { token } = response.data;
 
-        // Store the token in local storage or a context
         localStorage.setItem('authToken', token);
 
         toast.success('Login successful');
-        // Redirect to the Dashboard after successful login
         navigate('/dashboard');
       }
     } catch (error) {
