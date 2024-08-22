@@ -1,68 +1,79 @@
+/* Overall screen styling */
 .loading-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #ffffff; /* Light background to complement dark blue and blue */
-    font-family: 'Roboto', sans-serif; /* Modern font */
-    overflow: hidden; /* Ensure elements don't overflow */
-    position: relative; /* For positioning background graphic */
+    background: #ffffff; /* Light background for contrast */
+    font-family: 'Times New Roman', serif; /* Use Times New Roman font */
+    color: #ffffff; /* White text for contrast */
+    overflow: hidden;
+    position: relative;
 }
 
+/* Background graphic with a futuristic gradient */
 .background-graphic {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #003366, #3399ff); /* Gradient from dark blue to blue */
-    z-index: -1; /* Place it behind other elements */
-    clip-path: circle(50% at 50% 50%); /* Optional: Circular background effect */
+    background: linear-gradient(135deg, #003366, #3399ff, #0066cc); /* Gradient from dark blue to blue */
+    z-index: -1;
+    clip-path: ellipse(80% 70% at 50% 50%); /* Modern ellipse background effect */
+    filter: blur(10px); /* Blur effect for a more futuristic look */
 }
 
+/* Logo styling */
 .logo img {
-    width: 150px; /* Adjust size as needed */
+    width: 150px;
     margin-bottom: 20px;
-    border-radius: 50%; /* Round logo for modern look */
-    border: 4px solid #003366; /* Dark blue border for contrast */
-    padding: 5px;
+    border-radius: 50%;
+    border: 4px solid #003366;
+    padding: 8px;
+    /* Remove box-shadow */
 }
 
+/* Description section with modern text styling */
 .description {
     text-align: center;
     margin-bottom: 20px;
 }
 
 .description h1 {
-    font-size: 28px;
-    color: #003366; /* Dark blue for heading */
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Text shadow for readability */
+    font-size: 32px; /* Slightly larger heading for impact */
+    color: #003366; /* Blue for the heading */
+    margin-bottom: 15px;
+    /* Remove text-shadow */
 }
 
 .description p {
-    font-size: 18px;
-    color: #003366; /* Blue for paragraph text */
-    max-width: 600px; /* Optional: Restrict width for readability */
-    line-height: 1.6;
+    font-size: 20px;
+    color: #215f9d; /* Dark blue for readability */
+    max-width: 600px;
+    line-height: 1.8;
 }
 
+/* Start button with a futuristic look */
 .start-button {
-    padding: 12px 24px;
-    font-size: 18px;
-    background-color: #3399ff; /* Blue for button background */
-    color: #fff; /* White text color for button */
+    padding: 14px 28px;
+    font-size: 20px;
+    background-color: #003366;
+    color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    /* Remove box-shadow */
 }
 
 .start-button:hover {
-    background-color: #007acc; /* Darker blue shade on hover */
+    background-color: #007acc;
+    transform: scale(1.05); /* Slightly enlarge button on hover */
 }
 
+/* Loading container with smooth animation */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -70,34 +81,40 @@
 }
 
 .loading-bar {
-    width: 120px;
-    height: 12px;
-    background-color: #3399ff; /* Blue for loading bar */
-    margin-bottom: 10px;
-    animation: loading 3s infinite;
-    border-radius: 6px;
+    width: 150px;
+    height: 15px;
+    background-color: #003366;
+    margin-bottom: 15px;
+    animation: loading 2s infinite;
+    border-radius: 8px;
 }
 
 .loading-text {
-    font-size: 18px;
+    font-size: 20px;
     color: #003366; /* Dark blue for loading text */
+    font-weight: bold; /* Bold text for emphasis */
 }
 
+/* Footer text with a modern touch */
 .footer-text {
     margin-top: 20px;
-    font-size: 16px;
-    color: #3399ff; /* Blue for footer text */
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* Subtle text shadow */
+    font-size: 18px;
+    color: #003366;
+    /* Remove text-shadow */
 }
 
+/* Keyframe animation for the loading bar */
 @keyframes loading {
     0% {
-        width: 0;
+        transform: scaleX(0);
+        opacity: 0.5;
     }
     50% {
-        width: 120px;
+        transform: scaleX(1);
+        opacity: 1;
     }
     100% {
-        width: 0;
+        transform: scaleX(0);
+        opacity: 0.5;
     }
 }

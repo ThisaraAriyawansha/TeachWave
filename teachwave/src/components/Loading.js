@@ -22,7 +22,8 @@ const LoadingScreen = () => {
       </div>
       <div className="description">
         <h1>Welcome to TeachWave</h1>
-        <p>TeachWave is an online learning platform that offers interactive courses, quizzes, certifications, and live webinars, connecting students and instructors for a seamless learning experience.</p>
+        <p>TeachWave is an online learning platform that offers interactive courses, quizzes, certifications, 
+            and live webinars, connecting students and instructors for a seamless learning experience....</p>
       </div>
       {!loading ? (
         <button onClick={handleStart} className="start-button">Start</button>
@@ -33,7 +34,7 @@ const LoadingScreen = () => {
         </div>
       )}
       <div className="footer-text">
-        <p>Connecting learners and educators for a brighter future.</p>
+        <p>Connecting learners and educators for a brighter future...</p>
       </div>
     </div>
   );
