@@ -11,7 +11,6 @@ const App = () => {
         <Route path="/" element={<LoadingScreen />} />
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/dashboard" element={<Dashboard />} />
-
       </Routes>
     </Router>
   );

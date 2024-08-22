@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/teachwave', {
 
 // Define User model
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });
 
@@ -25,9 +25,9 @@ const User = mongoose.model('User', userSchema);
 // Register route
 app.post('/register', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully!' });
   } catch (error) {
@@ -38,8 +38,8 @@ app.post('/register', async (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

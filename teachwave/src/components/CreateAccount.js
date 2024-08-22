@@ -6,12 +6,14 @@ import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
 import loginImage from './image/login.jpg';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const CreateAccount = () => {
   const [isRegister, setIsRegister] = useState(true);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleToggle = () => {
     setIsRegister(!isRegister);
@@ -25,11 +27,20 @@ const CreateAccount = () => {
           toast.error('Passwords do not match');
           return;
         }
-        await axios.post('http://localhost:5000/register', { email, password });
+        await axios.post('http://localhost:5000/register', { username, password });
         toast.success('Registration successful');
+        // After registration, you may want to redirect to the login page or login directly
+        // navigate('/login'); // Uncomment this line if you have a login page to redirect to
       } else {
-        await axios.post('http://localhost:5000/login', { email, password });
+        const response = await axios.post('http://localhost:5000/login', { username, password });
+        const { token } = response.data;
+
+        // Store the token in local storage or a context
+        localStorage.setItem('authToken', token);
+
         toast.success('Login successful');
+        // Redirect to the Dashboard after successful login
+        navigate('/dashboard');
       }
     } catch (error) {
       toast.error('Error: ' + (error.response?.data.message || 'An unexpected error occurred'));
@@ -65,14 +76,14 @@ const CreateAccount = () => {
             <h1 className="form-title">{isRegister ? 'Create Account' : 'Login'}</h1>
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="email" className="form-label">Email</label>
+                <label htmlFor="username" className="form-label">Username</label>
                 <input
-                  type="email"
-                  id="email"
+                  type="text"
+                  id="username"
                   className="form-input"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
