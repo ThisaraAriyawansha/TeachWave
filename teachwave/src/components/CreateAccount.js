@@ -21,10 +21,10 @@ const CreateAccount = () => {
             style={{
               backgroundImage: `url(${isRegister ? registerImage : loginImage})`,
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 1.05, opacity: 0 }}
+            transition={{ duration: 0.4 }}
           />
         </AnimatePresence>
 
@@ -32,10 +32,10 @@ const CreateAccount = () => {
           <motion.div
             key={isRegister ? 'register-form' : 'login-form'}
             className="form-wrapper"
-            initial={{ opacity: 0, x: 100 }}
+            initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4 }}
           >
             <h1 className="form-title">{isRegister ? 'Create Account' : 'Login'}</h1>
             <form className="auth-form">

@@ -7,19 +7,19 @@
     height: 100vh;
     background: #ffffff; /* Light background for contrast */
     font-family: 'Times New Roman', serif; /* Use Times New Roman font */
-    color: #ffffff; /* White text for contrast */
+    color: #333; /* Darker text for contrast */
     overflow: hidden;
     position: relative;
 }
 
-/* Background graphic with a futuristic gradient */
+/* Background graphic with a Google color theme */
 .background-graphic {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #003366, #3399ff, #0066cc); /* Gradient from dark blue to blue */
+    background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #FF5722); /* Gradient with Google colors */
     z-index: -1;
     clip-path: ellipse(80% 70% at 50% 50%); /* Modern ellipse background effect */
     filter: blur(10px); /* Blur effect for a more futuristic look */
@@ -30,7 +30,7 @@
     width: 150px;
     margin-bottom: 20px;
     border-radius: 50%;
-    border: 4px solid #003366;
+    border: 4px solid #4285F4; /* Google's blue for the border */
     padding: 8px;
     /* Remove box-shadow */
 }
@@ -43,23 +43,23 @@
 
 .description h1 {
     font-size: 32px; /* Slightly larger heading for impact */
-    color: #003366; /* Blue for the heading */
+    color: #4285F4; /* Google's blue for the heading */
     margin-bottom: 15px;
     /* Remove text-shadow */
 }
 
 .description p {
     font-size: 20px;
-    color: #215f9d; /* Dark blue for readability */
+    color: #555; /* Dark gray for readability */
     max-width: 600px;
     line-height: 1.8;
 }
 
-/* Start button with a futuristic look */
+/* Start button with a Google color theme */
 .start-button {
     padding: 14px 28px;
     font-size: 20px;
-    background-color: #003366;
+    background-color: #4285F4; /* Google's blue */
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -69,7 +69,7 @@
 }
 
 .start-button:hover {
-    background-color: #007acc;
+    background-color: #357ae8; /* Darker blue on hover */
     transform: scale(1.05); /* Slightly enlarge button on hover */
 }
 
@@ -83,7 +83,7 @@
 .loading-bar {
     width: 150px;
     height: 15px;
-    background-color: #003366;
+    background-color: #4285F4; /* Google's blue */
     margin-bottom: 15px;
     animation: loading 2s infinite;
     border-radius: 8px;
@@ -91,7 +91,7 @@
 
 .loading-text {
     font-size: 20px;
-    color: #003366; /* Dark blue for loading text */
+    color: #4285F4; /* Google's blue for loading text */
     font-weight: bold; /* Bold text for emphasis */
 }
 
@@ -99,7 +99,7 @@
 .footer-text {
     margin-top: 20px;
     font-size: 18px;
-    color: #003366;
+    color: #4285F4; /* Google's blue */
     /* Remove text-shadow */
 }
 
