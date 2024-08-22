@@ -3,54 +3,37 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
     text-align: center;
-    background-color: #f8f9fa; /* Light background color */
   }
   
   .loading-logo {
-    width: 100px; /* Adjust logo width as needed */
-    margin-bottom: 20px; /* Space below the logo */
+    margin-bottom: 20px;
   }
   
   .loading-title {
-    font-size: 2.5rem; /* Large title font size */
-    font-weight: bold; /* Bold font weight */
-    margin-bottom: 10px; /* Space below the title */
+    font-size: 2rem;
+    margin-bottom: 10px;
   }
   
   .loading-description {
-    font-size: 1.2rem; /* Medium description font size */
-    margin-bottom: 20px; /* Space below the description */
-    color: #6c757d; /* Medium gray text color */
+    margin-bottom: 20px;
   }
   
   .loading-button {
-    font-size: 1.2rem; /* Button font size */
-    padding: 10px 20px; /* Padding inside the button */
-  }
-  
-  .loading-animation {
-    margin-top: 20px; /* Space above the animation */
-    width: 50%; /* Width of the progress bar container */
+    margin-bottom: 20px;
   }
   
   .loading-progress {
-    width: 100%; /* Width of the progress bar */
-    height: 10px; /* Height of the progress bar */
-    background-color: #e9ecef; /* Light background color for progress bar */
-    border-radius: 4px; /* Rounded corners for progress bar */
-    overflow: hidden; /* Ensure progress bar is contained within its container */
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
   }
   
   .progress-bar {
-    height: 100%; /* Full height of the progress bar */
-    background-color: #28a745; /* Green color for progress bar */
-    transition: width 1s ease-in-out; /* Smooth transition for width changes */
+    height: 10px;
+    background-color: #007bff;
+    transition: width 0.2s ease;
   }
   
-  .loading-text {
-    font-size: 1.2rem; /* Text size */
-    margin-top: 10px; /* Space above text */
-    color: #343a40; /* Dark text color */
-  }

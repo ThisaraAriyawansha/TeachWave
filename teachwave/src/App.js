@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoadingScreen from './components/Loading'; // Adjust the path as per your project structure
 
-
 // Placeholder MainContent component
 const MainContent = () => {
   return (
@@ -16,6 +15,7 @@ const MainContent = () => {
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const isLoggedIn = true; // Simulating login status (replace with actual logic)
 
   // Function to handle completion of loading (simulating an API call or async operation)
   const handleLoadingComplete = () => {
@@ -23,7 +23,6 @@ function App() {
       setIsLoading(false); // Update state to reflect loading completion
     }, 2000); // Simulating 2 seconds delay for loading
   };
-
 
   return (
     <div className="App">

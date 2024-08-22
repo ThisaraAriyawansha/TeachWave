@@ -33,7 +33,6 @@ const LoadingScreen = ({ onComplete }) => {
       <Button onClick={startLoading} className="loading-button">Let's Start</Button>
       {isLoading && (
         <div className="loading-animation">
-          {/* Replace with your custom progress bar animation */}
           <div className="loading-progress">
             <div className="progress-bar" style={{ width: `${progress}%` }}></div>
           </div>
