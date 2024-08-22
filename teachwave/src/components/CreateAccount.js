@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
@@ -6,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
 import loginImage from './image/login.jpg';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const CreateAccount = () => {
   const [isRegister, setIsRegister] = useState(true);
