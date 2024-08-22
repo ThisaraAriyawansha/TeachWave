@@ -3,17 +3,26 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('./models/User');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+// MongoDB connection
 mongoose.connect('mongodb://localhost:27017/teachwave', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
+// Define User model
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Register route
 app.post('/register', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -26,6 +35,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Login route
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
@@ -6,9 +7,31 @@ import loginImage from './image/login.jpg';
 
 const CreateAccount = () => {
   const [isRegister, setIsRegister] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleToggle = () => {
     setIsRegister(!isRegister);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isRegister) {
+        if (password !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+        await axios.post('http://localhost:5000/register', { email, password });
+        alert('Registration successful');
+      } else {
+        await axios.post('http://localhost:5000/login', { email, password });
+        alert('Login successful');
+      }
+    } catch (error) {
+      alert('Error: ' + error.response.data.message);
+    }
   };
 
   return (
@@ -38,7 +61,7 @@ const CreateAccount = () => {
             transition={{ duration: 0.4 }}
           >
             <h1 className="form-title">{isRegister ? 'Create Account' : 'Login'}</h1>
-            <form className="auth-form">
+            <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="email" className="form-label">Email</label>
                 <input
@@ -46,6 +69,8 @@ const CreateAccount = () => {
                   id="email"
                   className="form-input"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -56,6 +81,8 @@ const CreateAccount = () => {
                   id="password"
                   className="form-input"
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
@@ -67,6 +94,8 @@ const CreateAccount = () => {
                     id="confirm-password"
                     className="form-input"
                     placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
                 </div>
