@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import LoadingScreen from './components/Loading';
 import CreateAccount from './components/CreateAccount';
 import Dashboard from './components/Dashboard';
