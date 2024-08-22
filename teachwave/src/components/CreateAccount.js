@@ -1,67 +1,88 @@
-import React from 'react';
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBCardImage,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox
-}
-from 'mdb-react-ui-kit';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import './CreateAccount.css';
+import registerImage from './image/register2.jpg';
+import loginImage from './image/login.jpg';
 
-function App() {
+const CreateAccount = () => {
+  const [isRegister, setIsRegister] = useState(true);
+
+  const handleToggle = () => {
+    setIsRegister(!isRegister);
+  };
+
   return (
-    <MDBContainer fluid>
+    <div className="create-account-container">
+      <div className="form-image-wrapper">
+        <AnimatePresence>
+          <motion.div
+            key={isRegister ? 'register' : 'login'}
+            className="image-wrapper"
+            style={{
+              backgroundImage: `url(${isRegister ? registerImage : loginImage})`,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          />
+        </AnimatePresence>
 
-      <MDBCard className='text-black m-5' style={{borderRadius: '25px'}}>
-        <MDBCardBody>
-          <MDBRow>
-            <MDBCol md='10' lg='6' className='order-2 order-lg-1 d-flex flex-column align-items-center'>
-
-              <p classNAme="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
-
-              <div className="d-flex flex-row align-items-center mb-4 ">
-                <MDBIcon fas icon="user me-3" size='lg'/>
-                <MDBInput label='Your Name' id='form1' type='text' className='w-100'/>
+        <motion.div
+          className="form-wrapper"
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 100 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="form-title">{isRegister ? 'Create Account' : 'Login'}</h1>
+          <form className="auth-form">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                className="form-input"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                className="form-input"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+            {isRegister && (
+              <div className="form-group">
+                <label htmlFor="confirm-password" className="form-label">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  className="form-input"
+                  placeholder="Confirm your password"
+                  required
+                />
               </div>
-
-              <div className="d-flex flex-row align-items-center mb-4">
-                <MDBIcon fas icon="envelope me-3" size='lg'/>
-                <MDBInput label='Your Email' id='form2' type='email'/>
-              </div>
-
-              <div className="d-flex flex-row align-items-center mb-4">
-                <MDBIcon fas icon="lock me-3" size='lg'/>
-                <MDBInput label='Password' id='form3' type='password'/>
-              </div>
-
-              <div className="d-flex flex-row align-items-center mb-4">
-                <MDBIcon fas icon="key me-3" size='lg'/>
-                <MDBInput label='Repeat your password' id='form4' type='password'/>
-              </div>
-
-              <div className='mb-4'>
-                <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
-              </div>
-
-              <MDBBtn className='mb-4' size='lg'>Register</MDBBtn>
-
-            </MDBCol>
-
-            <MDBCol md='10' lg='6' className='order-1 order-lg-2 d-flex align-items-center'>
-              <MDBCardImage src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp' fluid/>
-            </MDBCol>
-
-          </MDBRow>
-        </MDBCardBody>
-      </MDBCard>
-
-    </MDBContainer>
+            )}
+            <button type="submit" className="submit-button">
+              {isRegister ? 'Register' : 'Login'}
+            </button>
+          </form>
+          <p className="toggle-text">
+            {isRegister ? 'Already have an account?' : 'Need to create an account?'}
+            <span onClick={handleToggle} className="toggle-link">
+              {isRegister ? 'Login' : 'Register'}
+            </span>
+          </p>
+        </motion.div>
+      </div>
+    </div>
   );
-}
+};
 
-export default App;
+export default CreateAccount;
