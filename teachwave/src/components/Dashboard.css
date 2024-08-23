@@ -1,125 +1,170 @@
-/* General Styles */
+/* Dashboard.css */
+
 .dashboard {
     display: flex;
     height: 100vh;
-    background-color: #f0f2f5;
-    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: 'Arial', sans-serif;
   }
   
-  /* Sidebar Styles */
   .sidebar {
     width: 260px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar:hover {
+    transform: translateX(-5px);
   }
   
   .sidebar-header {
-    padding: 20px;
-    text-align: center;
-    background-color: #34495e;
-    border-bottom: 1px solid #1abc9c;
+    margin-bottom: 20px;
   }
   
   .sidebar-header h3 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 1.2em;
+    color: #333;
   }
   
-  .sidebar ul {
-    list-style: none;
+  ul {
+    list-style-type: none;
     padding: 0;
-    margin: 0;
   }
   
-  .sidebar ul li {
-    padding: 15px 20px;
+  li {
+    padding: 15px;
     cursor: pointer;
-    font-size: 16px;
-    color: #ecf0f1;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.3s ease;
   }
   
-  .sidebar ul li:hover, .sidebar ul li.active {
-    background-color: #1abc9c;
-    color: #ffffff;
+  li.active {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  li:hover {
+    background-color: #f1f1f1;
+    transform: scale(1.02);
   }
   
   .logout-button {
-    margin: 20px;
+    margin-top: 20px;
     padding: 12px;
-    background-color: #e74c3c;
+    background-color: #333;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
+    width: 100%;
     font-size: 16px;
-    text-align: center;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease, transform 0.3s ease;
   }
   
   .logout-button:hover {
-    background-color: #c0392b;
+    background-color: #555;
+    transform: scale(1.05);
   }
   
-  /* Content Styles */
   .content {
-    flex-grow: 1;
-    padding: 40px;
-    background-color: #ecf0f1;
-    overflow-y: auto;
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  .content h2 {
-    font-size: 28px;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    font-weight: 600;
-  }
-  
-  .content form {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .content form label {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 16px;
-    color: #2c3e50;
-    font-weight: 500;
-  }
-  
-  .content form input,
-  .content form textarea {
-    width: 100%;
-    padding: 12px;
+  .content-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    background-color: #f7f9fa;
-    font-size: 14px;
   }
   
-  .content form button {
-    padding: 12px 20px;
-    background-color: #1abc9c;
+  .subject-selection {
+    margin-top: 20px;
+  }
+  
+  .subject-selection h3 {
+    margin: 0;
+    font-size: 1.2em;
+  }
+  
+  .subject-selection ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .subject-selection li {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+  
+  .subject-selection li:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .subject-content {
+    margin-top: 20px;
+  }
+  
+  .subject-content h4 {
+    margin-top: 0;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 15px;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    transition: border 0.3s ease;
+  }
+  
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus {
+    border: 1px solid #333;
+  }
+  
+  input[type="file"] {
+    margin-top: 5px;
+  }
+  
+  button[type="submit"] {
+    background-color: #333;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
     font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease, transform 0.3s ease;
   }
   
-  .content form button:hover {
-    background-color: #16a085;
+  button[type="submit"]:hover {
+    background-color: #555;
+    transform: scale(1.05);
   }
   

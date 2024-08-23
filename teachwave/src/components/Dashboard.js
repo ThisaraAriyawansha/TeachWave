@@ -3,23 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const [selectedSection, setSelectedSection] = useState('CourseManagement');
+  const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
+  const [selectedSubject, setSelectedSubject] = useState('');
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve the username from localStorage
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
     } else {
-      // If no username found, redirect to login
       navigate('/login');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    // Clear the authentication token and username from localStorage
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
     navigate('/create-account');
@@ -27,31 +25,57 @@ const Dashboard = () => {
 
   const renderContent = () => {
     switch (selectedSection) {
-      case 'CourseManagement':
+      case 'ViewCourseMaterials':
         return (
-          <div>
-            <h2>Course Management</h2>
+          <div className="content-section">
+            <h2>View Course Materials</h2>
+            <div className="subject-selection">
+              <h3>Select a Subject:</h3>
+              <ul>
+                <li onClick={() => setSelectedSubject('Introduction to Software Engineering')}>Introduction to Software Engineering</li>
+                <li onClick={() => setSelectedSubject('IoT')}>IoT</li>
+                <li onClick={() => setSelectedSubject('Python')}>Python</li>
+                <li onClick={() => setSelectedSubject('Data Structures')}>Data Structures</li>
+                <li onClick={() => setSelectedSubject('Computer Hardware')}>Computer Hardware</li>
+              </ul>
+            </div>
+            {selectedSubject && (
+              <div className="subject-content">
+                <h4>Materials for {selectedSubject}</h4>
+                <p>Here you can view all the materials for {selectedSubject}.</p>
+              </div>
+            )}
+          </div>
+        );
+      case 'SubmitAssignment':
+        return (
+          <div className="content-section">
+            <h2>Submit Assignment</h2>
             <form>
               <label>
-                Course Title:
-                <input type="text" placeholder="Enter course title" />
+                Assignment Title:
+                <input type="text" placeholder="Enter assignment title" />
               </label>
               <label>
-                Description:
-                <textarea placeholder="Enter course description"></textarea>
+                Upload File:
+                <input type="file" />
               </label>
-              <label>
-                Category:
-                <input type="text" placeholder="Enter course category" />
-              </label>
-              <button type="submit">Save Course</button>
+              <button type="submit">Submit Assignment</button>
             </form>
           </div>
         );
-      case 'QuizSettings':
+      case 'JoinLiveSession':
         return (
-          <div>
-            <h2>Quiz Settings</h2>
+          <div className="content-section">
+            <h2>Join Live Session</h2>
+            <p>Click the button below to join the live session.</p>
+            <button type="button">Join Session</button>
+          </div>
+        );
+      case 'TakeQuiz':
+        return (
+          <div className="content-section">
+            <h2>Take Quiz</h2>
             <form>
               <label>
                 Quiz Title:
@@ -61,41 +85,28 @@ const Dashboard = () => {
                 Number of Questions:
                 <input type="number" placeholder="Enter number of questions" />
               </label>
-              <button type="submit">Save Quiz</button>
+              <button type="submit">Start Quiz</button>
             </form>
           </div>
         );
-      case 'CertificationManagement':
+      case 'RateCourse':
         return (
-          <div>
-            <h2>Certification Management</h2>
+          <div className="content-section">
+            <h2>Rate Course</h2>
             <form>
               <label>
-                Certification Title:
-                <input type="text" placeholder="Enter certification title" />
+                Course Title:
+                <input type="text" placeholder="Enter course title" />
               </label>
               <label>
-                Issuing Authority:
-                <input type="text" placeholder="Enter issuing authority" />
-              </label>
-              <button type="submit">Save Certification</button>
-            </form>
-          </div>
-        );
-      case 'LiveWebinars':
-        return (
-          <div>
-            <h2>Live Webinars</h2>
-            <form>
-              <label>
-                Webinar Title:
-                <input type="text" placeholder="Enter webinar title" />
+                Rating:
+                <input type="number" placeholder="Enter rating (1-5)" min="1" max="5" />
               </label>
               <label>
-                Date and Time:
-                <input type="datetime-local" />
+                Feedback:
+                <textarea placeholder="Enter your feedback"></textarea>
               </label>
-              <button type="submit">Schedule Webinar</button>
+              <button type="submit">Submit Rating</button>
             </form>
           </div>
         );
@@ -111,34 +122,13 @@ const Dashboard = () => {
           <h3>Welcome, {username}</h3>
         </div>
         <ul>
-          <li
-            className={selectedSection === 'CourseManagement' ? 'active' : ''}
-            onClick={() => setSelectedSection('CourseManagement')}
-          >
-            Course Management
-          </li>
-          <li
-            className={selectedSection === 'QuizSettings' ? 'active' : ''}
-            onClick={() => setSelectedSection('QuizSettings')}
-          >
-            Quiz Settings
-          </li>
-          <li
-            className={selectedSection === 'CertificationManagement' ? 'active' : ''}
-            onClick={() => setSelectedSection('CertificationManagement')}
-          >
-            Certification Management
-          </li>
-          <li
-            className={selectedSection === 'LiveWebinars' ? 'active' : ''}
-            onClick={() => setSelectedSection('LiveWebinars')}
-          >
-            Live Webinars
-          </li>
+          <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
+          <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
+          <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
+          <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
+          <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
         </ul>
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
       </div>
       <div className="content">
         {renderContent()}
