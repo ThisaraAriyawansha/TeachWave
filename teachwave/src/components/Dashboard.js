@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Dashboard.css';
+import Jitsi from 'react-jitsi';
+
 
 const Dashboard = () => {
     const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
@@ -14,6 +16,8 @@ const Dashboard = () => {
     const [messageType, setMessageType] = useState('info'); // 'info', 'success', 'error'
     const [submittedAssignments, setSubmittedAssignments] = useState([]);
     const navigate = useNavigate();
+    const [isSessionJoined, setIsSessionJoined] = useState(false);
+    const [roomName, setRoomName] = useState(''); // This will be the room name for Jitsi
 
   
     useEffect(() => {
@@ -80,6 +84,15 @@ const Dashboard = () => {
         }
       };
     
+      const handleJoinSession = () => {
+        if (authKey !== '12345') {
+            showMessage('Unauthorized to join session', 'error');
+            return;
+        }
+        setRoomName('LiveClass-' + new Date().getTime()); // Generating a unique room name
+        setIsSessionJoined(true);
+    };
+
       const handleAssignmentDelete = async (assignmentId) => {
         try {
           const token = localStorage.getItem('authToken'); // Ensure you have a valid auth token
@@ -222,14 +235,33 @@ const Dashboard = () => {
               </div>
             );
     
-      case 'JoinLiveSession':
-        return (
-          <div className="content-section">
-            <h2>Join Live Session</h2>
-            <p>Click the button below to join the live session.</p>
-            <button type="button" className="join-button">Join Session</button>
-          </div>
-        );
+            case 'JoinLiveSession':
+                return (
+                    <div className="content-section">
+                        <h2>Join Live Session</h2>
+                        {!isSessionJoined ? (
+                            <>
+                                <p>Click the button below to join the live session.</p>
+                                <input
+                                    type="password"
+                                    placeholder="Enter authorization key"
+                                    value={authKey}
+                                    onChange={(e) => setAuthKey(e.target.value)}
+                                />
+                                <button type="button" className="join-button" onClick={handleJoinSession}>Join Session</button>
+                            </>
+                        ) : (
+                            <div className="jitsi-container">
+                                <Jitsi
+                                    roomName={roomName}
+                                    displayName={username}
+                                    containerStyle={{ width: '100%', height: '500px' }}
+                                    onAPILoad={(JitsiMeetAPI) => console.log('Jitsi API loaded', JitsiMeetAPI)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                );
       case 'TakeQuiz':
         return (
           <div className="content-section">
@@ -275,29 +307,28 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h3>Welcome, {username}</h3>
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <h3>Welcome, {username}</h3>
+            </div>
+            <ul>
+                <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
+                <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
+                <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
+                <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
+                <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
+            </ul>
+            <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
-        <ul>
-          <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
-          <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
-          <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
-          <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
-          <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
-        </ul>
-        <button className="logout-button" onClick={handleLogout}>Logout</button>
-      </div>
-      <div className="content">
-        {renderContent()}
-      </div>
-      {message && (
-        <div className={`message-box ${messageType}`}>
-          {message}
+        <div className="content">
+            {renderContent()}
         </div>
-      )}
+        {message && (
+            <div className={`message-box ${messageType}`}>
+                {message}
+            </div>
+        )}
     </div>
-  );
+);
 };
-
 export default Dashboard;

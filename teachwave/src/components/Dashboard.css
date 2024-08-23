@@ -193,3 +193,12 @@
     color: #555;
   }
   
+  .jitsi-container {
+    width: 100%;
+    height: 500px;
+    margin-top: 20px;
+}
+
+.join-button, .submit-button, .upload-button {
+    margin-top: 10px;
+}
