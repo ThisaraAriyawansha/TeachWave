@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
 import loginImage from './image/login.jpg';
+import Dashboard from './Dashboard';
 
 const CreateAccount = () => {
   const [isRegister, setIsRegister] = useState(true);
