@@ -35,6 +35,16 @@ const fileSchema = new mongoose.Schema({
 
 const File = mongoose.model('File', fileSchema);
 
+// Define Assignment model
+const assignmentSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+  username: { type: String, required: true },
+  description: { type: String, required: false }
+});
+
+const Assignment = mongoose.model('Assignment', assignmentSchema);
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -120,6 +130,37 @@ app.delete('/files/:id', async (req, res) => {
     // Delete the file record from the database
     await File.findByIdAndDelete(req.params.id);
     res.json({ message: 'File deleted successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Submit assignment route
+app.post('/submit-assignment', upload.single('file'), async (req, res) => {
+  const { title, username, description } = req.body;
+  if (!title || !username || !req.file) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+  
+  try {
+    const newAssignment = new Assignment({
+      title,
+      url: `/uploads/${req.file.filename}`,
+      username,
+      description
+    });
+    await newAssignment.save();
+    res.status(201).json({ message: 'Assignment submitted successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get submitted assignments for a user
+app.get('/submitted-assignments/:username', async (req, res) => {
+  try {
+    const assignments = await Assignment.find({ username: req.params.username });
+    res.json(assignments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

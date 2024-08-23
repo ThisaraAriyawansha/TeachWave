@@ -170,3 +170,26 @@
     background-color: #f44336;
   }
   
+
+  /* Add this to Dashboard.css */
+.file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .file-link {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .file-link:hover {
+    text-decoration: underline;
+  }
+  
+  .file-item span {
+    margin-left: 10px;
+    color: #555;
+  }
+  

@@ -98,6 +98,44 @@ const Dashboard = () => {
     }, 5000); // Clear message after 5 seconds
   };
 
+  const [submittedAssignments, setSubmittedAssignments] = useState([]);
+
+  const handleAssignmentSubmit = async (event) => {
+    event.preventDefault();
+    const title = event.target.title.value;
+    const file = event.target.file.files[0];
+    
+    if (!title || !file) {
+      showMessage('Please provide a title and upload a file.', 'error');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('file', file);
+    formData.append('username', username);
+  
+    try {
+      await axios.post('http://localhost:5000/submit-assignment', formData);
+      showMessage('Assignment submitted successfully!', 'success');
+      fetchSubmittedAssignments();
+    } catch (error) {
+      console.error('Error submitting assignment:', error);
+      showMessage('Failed to submit assignment. Please try again.', 'error');
+    }
+  };
+  
+  const fetchSubmittedAssignments = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/submitted-assignments/${username}`);
+      setSubmittedAssignments(response.data);
+    } catch (error) {
+      console.error('Error fetching submitted assignments:', error);
+      showMessage('Failed to fetch submitted assignments. Please try again.', 'error');
+    }
+  };
+
+
   const renderContent = () => {
     switch (selectedSection) {
       case 'ViewCourseMaterials':
@@ -136,21 +174,32 @@ const Dashboard = () => {
         );
       case 'SubmitAssignment':
         return (
-          <div className="content-section">
-            <h2>Submit Assignment</h2>
-            <form>
-              <label>
-                Assignment Title:
-                <input type="text" placeholder="Enter assignment title" />
-              </label>
-              <label>
-                Upload File:
-                <input type="file" />
-              </label>
-              <button type="submit" className="submit-button">Submit Assignment</button>
-            </form>
-          </div>
-        );
+            <div className="content-section">
+              <h2>Submit Assignment</h2>
+              <form onSubmit={handleAssignmentSubmit}>
+                <label>
+                  Assignment Title:
+                  <input type="text" name="title" placeholder="Enter assignment title" />
+                </label>
+                <label>
+                  Upload File:
+                  <input type="file" name="file" />
+                </label>
+                <button type="submit" className="submit-button">Submit Assignment</button>
+              </form>
+              <h3>Submitted Assignments:</h3>
+              <ul>
+                {submittedAssignments.map((assignment) => (
+                  <li key={assignment._id} className="file-item">
+                    <a href={`http://localhost:5000${assignment.url}`} target="_blank" rel="noopener noreferrer" className="file-link">
+                      {assignment.title}
+                    </a>
+                    <span>{assignment.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
       case 'JoinLiveSession':
         return (
           <div className="content-section">
