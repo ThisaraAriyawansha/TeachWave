@@ -116,7 +116,8 @@ app.get('/files/:subject', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-// Delete course material
+
+//delete course material
 app.delete('/files/:id', async (req, res) => {
     try {
       const fileId = req.params.id;
@@ -146,40 +147,32 @@ app.delete('/files/:id', async (req, res) => {
     }
   });
   
-  
-// Delete assignment route
-app.delete('/files/:id', async (req, res) => {
+
+  // Delete assignment route
+app.delete('/assignments/:id', async (req, res) => {
     try {
-      const fileId = req.params.id;
-      const file = await File.findById(fileId);
-  
-      if (!file) {
-        console.log(`File not found with ID: ${fileId}`);
-        return res.status(404).json({ message: 'File not found' });
+      const assignmentId = req.params.id;
+      const assignment = await Assignment.findById(assignmentId);
+      
+      if (!assignment) {
+        return res.status(404).json({ message: 'Assignment not found' });
       }
-  
-      const filePath = path.join(__dirname, 'uploads', path.basename(file.url));
-      console.log(`Attempting to delete file at: ${filePath}`);
-  
+      
+      const filePath = path.join(__dirname, 'uploads', path.basename(assignment.url));
+      
+      // Remove the assignment file from the filesystem
       fs.unlink(filePath, (err) => {
         if (err) {
-          console.error('Error deleting file from filesystem:', err);
-          return res.status(500).json({ message: 'Failed to delete file from filesystem' });
+          return res.status(500).json({ message: 'Failed to delete assignment file' });
         }
-        console.log('File successfully deleted from filesystem');
-        File.findByIdAndDelete(fileId)
-          .then(() => res.json({ message: 'File deleted successfully!' }))
-          .catch((err) => {
-            console.error('Error deleting file from database:', err);
-            res.status(500).json({ message: 'Failed to delete file from database' });
-          });
       });
+      
+      await Assignment.findByIdAndDelete(assignmentId);
+      res.json({ message: 'Assignment deleted successfully!' });
     } catch (error) {
-      console.error('Error during file deletion:', error);
       res.status(500).json({ message: error.message });
     }
   });
-  
   
 
 // Submit assignment route

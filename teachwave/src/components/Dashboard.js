@@ -79,6 +79,21 @@ const Dashboard = () => {
     }
   };
 
+  const handleAssignmentDelete = async (assignmentId) => {
+    try {
+      const token = localStorage.getItem('authToken'); // Ensure you have a valid auth token
+      await axios.delete(`http://localhost:5000/assignments/${assignmentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showMessage('Assignment deleted successfully!', 'success');
+      fetchSubmittedAssignments(); // Refresh the list after deletion
+    } catch (error) {
+      console.error('Error deleting assignment:', error);
+      showMessage('Failed to delete assignment. Please try again.', 'error');
+    }
+  };
+  
+
   const handleDelete = async (fileId) => {
     try {
       const token = localStorage.getItem('token');
@@ -199,7 +214,7 @@ const Dashboard = () => {
                     {assignment.title}
                   </a>
                   <button className="download-button" onClick={() => handleDownload(assignment.url)}>Download</button>
-                  <button className="delete-button" onClick={() => handleDelete(assignment._id)}>Delete</button>
+                  <button className="delete-button" onClick={() => handleAssignmentDelete(assignment._id)}>Delete</button>
                 </li>
               ))}
             </ul>
