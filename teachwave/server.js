@@ -8,6 +8,9 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+const port = 5000;
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 app.use('/uploads', express.static('uploads'));
@@ -113,27 +116,71 @@ app.get('/files/:subject', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-// Delete a file
+// Delete course material
 app.delete('/files/:id', async (req, res) => {
-  try {
-    const file = await File.findById(req.params.id);
-    if (!file) {
-      return res.status(404).json({ message: 'File not found' });
-    }
-    // Delete the file from the filesystem
-    fs.unlink(path.join(__dirname, 'uploads', path.basename(file.url)), (err) => {
-      if (err) {
-        console.error('Error deleting file from filesystem:', err);
+    try {
+      const fileId = req.params.id;
+      const file = await File.findById(fileId);
+  
+      if (!file) {
+        console.log(`File not found with ID: ${fileId}`);
+        return res.status(404).json({ message: 'File not found' });
       }
-    });
-    // Delete the file record from the database
-    await File.findByIdAndDelete(req.params.id);
-    res.json({ message: 'File deleted successfully!' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  
+      const filePath = path.join(__dirname, 'uploads', path.basename(file.url));
+      console.log(`Attempting to delete file at: ${filePath}`);
+  
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting file from filesystem:', err);
+          return res.status(500).json({ message: 'Failed to delete file from filesystem' });
+        }
+        console.log('File successfully deleted from filesystem');
+      });
+  
+      await File.findByIdAndDelete(fileId);
+      res.json({ message: 'File deleted successfully!' });
+    } catch (error) {
+      console.error('Error during file deletion:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+  
+// Delete assignment route
+app.delete('/files/:id', async (req, res) => {
+    try {
+      const fileId = req.params.id;
+      const file = await File.findById(fileId);
+  
+      if (!file) {
+        console.log(`File not found with ID: ${fileId}`);
+        return res.status(404).json({ message: 'File not found' });
+      }
+  
+      const filePath = path.join(__dirname, 'uploads', path.basename(file.url));
+      console.log(`Attempting to delete file at: ${filePath}`);
+  
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting file from filesystem:', err);
+          return res.status(500).json({ message: 'Failed to delete file from filesystem' });
+        }
+        console.log('File successfully deleted from filesystem');
+        File.findByIdAndDelete(fileId)
+          .then(() => res.json({ message: 'File deleted successfully!' }))
+          .catch((err) => {
+            console.error('Error deleting file from database:', err);
+            res.status(500).json({ message: 'Failed to delete file from database' });
+          });
+      });
+    } catch (error) {
+      console.error('Error during file deletion:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+  
 
 // Submit assignment route
 app.post('/submit-assignment', upload.single('file'), async (req, res) => {
@@ -166,6 +213,7 @@ app.get('/submitted-assignments/:username', async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
+// Start server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

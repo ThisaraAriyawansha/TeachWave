@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [authKey, setAuthKey] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info'); // 'info', 'success', 'error'
+  const [submittedAssignments, setSubmittedAssignments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +29,12 @@ const Dashboard = () => {
       fetchFiles(selectedSubject);
     }
   }, [selectedSubject]);
+
+  useEffect(() => {
+    if (selectedSection === 'SubmitAssignment') {
+      fetchSubmittedAssignments();
+    }
+  }, [selectedSection]);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -74,7 +81,7 @@ const Dashboard = () => {
 
   const handleDelete = async (fileId) => {
     try {
-      const token = localStorage.getItem('token'); // or wherever you store the token
+      const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:5000/files/${fileId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -98,8 +105,6 @@ const Dashboard = () => {
     }, 5000); // Clear message after 5 seconds
   };
 
-  const [submittedAssignments, setSubmittedAssignments] = useState([]);
-
   const handleAssignmentSubmit = async (event) => {
     event.preventDefault();
     const title = event.target.title.value;
@@ -118,13 +123,13 @@ const Dashboard = () => {
     try {
       await axios.post('http://localhost:5000/submit-assignment', formData);
       showMessage('Assignment submitted successfully!', 'success');
-      fetchSubmittedAssignments();
+      fetchSubmittedAssignments(); // Refresh the list after submission
     } catch (error) {
       console.error('Error submitting assignment:', error);
       showMessage('Failed to submit assignment. Please try again.', 'error');
     }
   };
-  
+
   const fetchSubmittedAssignments = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/submitted-assignments/${username}`);
@@ -134,7 +139,6 @@ const Dashboard = () => {
       showMessage('Failed to fetch submitted assignments. Please try again.', 'error');
     }
   };
-
 
   const renderContent = () => {
     switch (selectedSection) {
@@ -174,32 +178,33 @@ const Dashboard = () => {
         );
       case 'SubmitAssignment':
         return (
-            <div className="content-section">
-              <h2>Submit Assignment</h2>
-              <form onSubmit={handleAssignmentSubmit}>
-                <label>
-                  Assignment Title:
-                  <input type="text" name="title" placeholder="Enter assignment title" />
-                </label>
-                <label>
-                  Upload File:
-                  <input type="file" name="file" />
-                </label>
-                <button type="submit" className="submit-button">Submit Assignment</button>
-              </form>
-              <h3>Submitted Assignments:</h3>
-              <ul>
-                {submittedAssignments.map((assignment) => (
-                  <li key={assignment._id} className="file-item">
-                    <a href={`http://localhost:5000${assignment.url}`} target="_blank" rel="noopener noreferrer" className="file-link">
-                      {assignment.title}
-                    </a>
-                    <span>{assignment.description}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
+          <div className="content-section">
+            <h2>Submit Assignment</h2>
+            <form onSubmit={handleAssignmentSubmit}>
+              <label>
+                Assignment Title:
+                <input type="text" name="title" placeholder="Enter assignment title" />
+              </label>
+              <label>
+                Upload File:
+                <input type="file" name="file" />
+              </label>
+              <button type="submit" className="submit-button">Submit Assignment</button>
+            </form>
+            <h3>Submitted Assignments:</h3>
+            <ul>
+              {submittedAssignments.map((assignment) => (
+                <li key={assignment._id} className="file-item">
+                  <a href={`http://localhost:5000${assignment.url}`} target="_blank" rel="noopener noreferrer" className="file-link">
+                    {assignment.title}
+                  </a>
+                  <button className="download-button" onClick={() => handleDownload(assignment.url)}>Download</button>
+                  <button className="delete-button" onClick={() => handleDelete(assignment._id)}>Delete</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
       case 'JoinLiveSession':
         return (
           <div className="content-section">
@@ -236,44 +241,45 @@ const Dashboard = () => {
               </label>
               <label>
                 Rating:
-                <input type="number" placeholder="Enter rating (1-5)" min="1" max="5" />
+                <select>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
               </label>
               <label>
                 Feedback:
-                <textarea placeholder="Enter your feedback"></textarea>
+                <textarea placeholder="Enter your feedback" />
               </label>
-              <button type="submit" className="submit-rating-button">Submit Rating</button>
+              <button type="submit" className="submit-feedback-button">Submit Feedback</button>
             </form>
           </div>
         );
       default:
-        return null;
+        return <div>Select a section to view content.</div>;
     }
   };
 
   return (
     <div className="dashboard">
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h3>Welcome, {username}</h3>
-        </div>
-        <ul>
-          <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
-          <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
-          <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
-          <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
-          <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
-        </ul>
-        <button className="logout-button" onClick={handleLogout}>Logout</button>
-      </div>
+      <nav>
+        <button onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</button>
+        <button onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</button>
+        <button onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</button>
+        <button onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</button>
+        <button onClick={() => setSelectedSection('RateCourse')}>Rate Course</button>
+        <button onClick={handleLogout}>Logout</button>
+      </nav>
       <div className="content">
         {renderContent()}
+        {message && (
+          <div className={`message ${messageType}`}>
+            {message}
+          </div>
+        )}
       </div>
-      {message && (
-        <div className={`message-box ${messageType}`}>
-          {message}
-        </div>
-      )}
     </div>
   );
 };
