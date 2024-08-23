@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 app.use(express.json());
@@ -110,7 +111,14 @@ app.delete('/files/:id', async (req, res) => {
     if (!file) {
       return res.status(404).json({ message: 'File not found' });
     }
-    await file.remove();
+    // Delete the file from the filesystem
+    fs.unlink(path.join(__dirname, 'uploads', path.basename(file.url)), (err) => {
+      if (err) {
+        console.error('Error deleting file from filesystem:', err);
+      }
+    });
+    // Delete the file record from the database
+    await File.findByIdAndDelete(req.params.id);
     res.json({ message: 'File deleted successfully!' });
   } catch (error) {
     res.status(500).json({ message: error.message });

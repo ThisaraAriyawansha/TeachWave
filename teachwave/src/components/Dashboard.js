@@ -5,10 +5,13 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
-  const [selectedSubject, setSelectedSubject] = useState('');
   const [username, setUsername] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('');
   const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [authKey, setAuthKey] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('info'); // 'info', 'success', 'error'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,63 +23,79 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (selectedSubject) {
+      fetchFiles(selectedSubject);
+    }
+  }, [selectedSubject]);
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
     navigate('/create-account');
   };
 
-  const handleFileUpload = async (event) => {
-    event.preventDefault();
-    if (authKey !== '12345') {
-      alert('Unauthorized');
+  const handleSubjectChange = (event) => {
+    setSelectedSubject(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file || !selectedSubject || authKey !== '12345') {
+      showMessage('Invalid input or unauthorized', 'error');
       return;
     }
-    
     const formData = new FormData();
-    formData.append('file', event.target.file.files[0]);
+    formData.append('file', file);
     formData.append('subject', selectedSubject);
     formData.append('authKey', authKey);
-
     try {
-      await axios.post('http://localhost:5000/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      fetchFiles();
+      await axios.post('http://localhost:5000/upload', formData);
+      showMessage('File uploaded successfully!', 'success');
+      fetchFiles(selectedSubject);
     } catch (error) {
-      console.error('Error uploading file', error);
+      console.error('Error uploading file:', error);
+      showMessage('Failed to upload file. Please try again.', 'error');
     }
   };
 
-  const fetchFiles = async () => {
+  const fetchFiles = async (subject) => {
     try {
-      const response = await axios.get(`http://localhost:5000/files/${selectedSubject}`);
+      const response = await axios.get(`http://localhost:5000/files/${subject}`);
       setFiles(response.data);
     } catch (error) {
-      console.error('Error fetching files', error);
+      console.error('Error fetching files:', error);
+      showMessage('Failed to fetch files. Please try again.', 'error');
     }
   };
 
-  const handleFileDelete = async (fileId) => {
-    if (authKey !== '12345') {
-      alert('Unauthorized');
-      return;
-    }
-
+  const handleDelete = async (fileId) => {
     try {
+      const token = localStorage.getItem('token'); // or wherever you store the token
       await axios.delete(`http://localhost:5000/files/${fileId}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
-      fetchFiles();
+      showMessage('File deleted successfully!', 'success');
+      fetchFiles(selectedSubject);
     } catch (error) {
-      console.error('Error deleting file', error);
+      console.error('Error deleting file:', error.response.data);
+      showMessage('Failed to delete file. Please try again.', 'error');
     }
   };
 
-  const handleFileDownload = (fileUrl) => {
-    window.open(fileUrl, '_blank');
+  const handleDownload = (fileUrl) => {
+    window.open(`http://localhost:5000${fileUrl}`, '_blank');
+  };
+
+  const showMessage = (text, type) => {
+    setMessage(text);
+    setMessageType(type);
+    setTimeout(() => {
+      setMessage('');
+    }, 5000); // Clear message after 5 seconds
   };
 
   const renderContent = () => {
@@ -85,43 +104,34 @@ const Dashboard = () => {
         return (
           <div className="content-section">
             <h2>View Course Materials</h2>
-            <div className="subject-selection">
-              <h3>Select a Subject:</h3>
-              <ul>
-                <li onClick={() => setSelectedSubject('Introduction to Software Engineering')}>Introduction to Software Engineering</li>
-                <li onClick={() => setSelectedSubject('Internet of Things (IoT)')}>Internet of Things (IoT)</li>
-                <li onClick={() => setSelectedSubject('Python Programming')}>Python Programming</li>
-                <li onClick={() => setSelectedSubject('Data Structures and Algorithms')}>Data Structures and Algorithms</li>
-                <li onClick={() => setSelectedSubject('Computer Hardware Fundamentals')}>Computer Hardware Fundamentals</li>
-              </ul>
-            </div>
-            {selectedSubject && (
-              <div className="subject-content">
-                <h4>Materials for {selectedSubject}</h4>
-                <form onSubmit={handleFileUpload}>
-                  <label>
-                    Upload File:
-                    <input type="file" name="file" />
-                  </label>
-                  <label>
-                    Authorization Key:
-                    <input type="password" value={authKey} onChange={(e) => setAuthKey(e.target.value)} />
-                  </label>
-                  <button type="submit">Upload</button>
-                </form>
-                <div className="file-list">
-                  <h5>Files:</h5>
-                  <ul>
-                    {files.map(file => (
-                      <li key={file._id}>
-                        <a href="#" onClick={() => handleFileDownload(file.url)}>{file.name}</a>
-                        <button onClick={() => handleFileDelete(file._id)}>Delete</button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
+            <select value={selectedSubject} onChange={handleSubjectChange}>
+              <option value="">Select Subject</option>
+              <option value="Introduction to Software Engineering">Introduction to Software Engineering</option>
+              <option value="IoT">IoT</option>
+              <option value="Python Programming">Python Programming</option>
+              <option value="Data Structures">Data Structures</option>
+              <option value="Computer Hardware">Computer Hardware</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Enter authorization key"
+              value={authKey}
+              onChange={(e) => setAuthKey(e.target.value)}
+            />
+            <input type="file" onChange={handleFileChange} />
+            <button className="upload-button" onClick={handleUpload}>Upload File</button>
+            <h3>Uploaded Files:</h3>
+            <ul>
+              {files.map((file) => (
+                <li key={file._id} className="file-item">
+                  <a href={`http://localhost:5000${file.url}`} target="_blank" rel="noopener noreferrer" className="file-link">
+                    {file.name}
+                  </a>
+                  <button className="download-button" onClick={() => handleDownload(file.url)}>Download</button>
+                  <button className="delete-button" onClick={() => handleDelete(file._id)}>Delete</button>
+                </li>
+              ))}
+            </ul>
           </div>
         );
       case 'SubmitAssignment':
@@ -137,7 +147,7 @@ const Dashboard = () => {
                 Upload File:
                 <input type="file" />
               </label>
-              <button type="submit">Submit Assignment</button>
+              <button type="submit" className="submit-button">Submit Assignment</button>
             </form>
           </div>
         );
@@ -146,7 +156,7 @@ const Dashboard = () => {
           <div className="content-section">
             <h2>Join Live Session</h2>
             <p>Click the button below to join the live session.</p>
-            <button type="button">Join Session</button>
+            <button type="button" className="join-button">Join Session</button>
           </div>
         );
       case 'TakeQuiz':
@@ -162,7 +172,7 @@ const Dashboard = () => {
                 Number of Questions:
                 <input type="number" placeholder="Enter number of questions" />
               </label>
-              <button type="submit">Start Quiz</button>
+              <button type="submit" className="start-quiz-button">Start Quiz</button>
             </form>
           </div>
         );
@@ -183,7 +193,7 @@ const Dashboard = () => {
                 Feedback:
                 <textarea placeholder="Enter your feedback"></textarea>
               </label>
-              <button type="submit">Submit Rating</button>
+              <button type="submit" className="submit-rating-button">Submit Rating</button>
             </form>
           </div>
         );
@@ -210,6 +220,11 @@ const Dashboard = () => {
       <div className="content">
         {renderContent()}
       </div>
+      {message && (
+        <div className={`message-box ${messageType}`}>
+          {message}
+        </div>
+      )}
     </div>
   );
 };
