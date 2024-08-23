@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [username, setUsername] = useState('');
+  const [files, setFiles] = useState([]);
+  const [authKey, setAuthKey] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +26,59 @@ const Dashboard = () => {
     navigate('/create-account');
   };
 
+  const handleFileUpload = async (event) => {
+    event.preventDefault();
+    if (authKey !== '12345') {
+      alert('Unauthorized');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', event.target.file.files[0]);
+    formData.append('subject', selectedSubject);
+    formData.append('authKey', authKey);
+
+    try {
+      await axios.post('http://localhost:5000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      fetchFiles();
+    } catch (error) {
+      console.error('Error uploading file', error);
+    }
+  };
+
+  const fetchFiles = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/files/${selectedSubject}`);
+      setFiles(response.data);
+    } catch (error) {
+      console.error('Error fetching files', error);
+    }
+  };
+
+  const handleFileDelete = async (fileId) => {
+    if (authKey !== '12345') {
+      alert('Unauthorized');
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:5000/files/${fileId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      });
+      fetchFiles();
+    } catch (error) {
+      console.error('Error deleting file', error);
+    }
+  };
+
+  const handleFileDownload = (fileUrl) => {
+    window.open(fileUrl, '_blank');
+  };
+
   const renderContent = () => {
     switch (selectedSection) {
       case 'ViewCourseMaterials':
@@ -33,16 +89,37 @@ const Dashboard = () => {
               <h3>Select a Subject:</h3>
               <ul>
                 <li onClick={() => setSelectedSubject('Introduction to Software Engineering')}>Introduction to Software Engineering</li>
-                <li onClick={() => setSelectedSubject('IoT')}>IoT</li>
-                <li onClick={() => setSelectedSubject('Python')}>Python</li>
-                <li onClick={() => setSelectedSubject('Data Structures')}>Data Structures</li>
-                <li onClick={() => setSelectedSubject('Computer Hardware')}>Computer Hardware</li>
+                <li onClick={() => setSelectedSubject('Internet of Things (IoT)')}>Internet of Things (IoT)</li>
+                <li onClick={() => setSelectedSubject('Python Programming')}>Python Programming</li>
+                <li onClick={() => setSelectedSubject('Data Structures and Algorithms')}>Data Structures and Algorithms</li>
+                <li onClick={() => setSelectedSubject('Computer Hardware Fundamentals')}>Computer Hardware Fundamentals</li>
               </ul>
             </div>
             {selectedSubject && (
               <div className="subject-content">
                 <h4>Materials for {selectedSubject}</h4>
-                <p>Here you can view all the materials for {selectedSubject}.</p>
+                <form onSubmit={handleFileUpload}>
+                  <label>
+                    Upload File:
+                    <input type="file" name="file" />
+                  </label>
+                  <label>
+                    Authorization Key:
+                    <input type="password" value={authKey} onChange={(e) => setAuthKey(e.target.value)} />
+                  </label>
+                  <button type="submit">Upload</button>
+                </form>
+                <div className="file-list">
+                  <h5>Files:</h5>
+                  <ul>
+                    {files.map(file => (
+                      <li key={file._id}>
+                        <a href="#" onClick={() => handleFileDownload(file.url)}>{file.name}</a>
+                        <button onClick={() => handleFileDelete(file._id)}>Delete</button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             )}
           </div>
