@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 import './CreateAccount.css';
 import registerImage from './image/register2.jpg';
 import loginImage from './image/login.jpg';
-import Dashboard from './Dashboard';
 
 const CreateAccount = () => {
   const [isRegister, setIsRegister] = useState(true);
@@ -30,14 +29,13 @@ const CreateAccount = () => {
         }
         await axios.post('http://localhost:5000/register', { username, password });
         toast.success('Registration successful');
-        // Uncomment if you want to redirect after registration
-        // navigate('/login');
       } else {
         const response = await axios.post('http://localhost:5000/login', { username, password });
         const { token } = response.data;
-
+  
         localStorage.setItem('authToken', token);
-
+        localStorage.setItem('username', username);  // Store the username
+  
         toast.success('Login successful');
         navigate('/dashboard');
       }
@@ -45,6 +43,7 @@ const CreateAccount = () => {
       toast.error('Error: ' + (error.response?.data.message || 'An unexpected error occurred'));
     }
   };
+  
 
   return (
     <div className="create-account-container">
