@@ -71,7 +71,7 @@ const PythonQuiz = () => {
                 </header>
                 <nav>
                     <ul>
-                        <li><a href="#">Home</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
                     </ul>
                 </nav>
                 <div className="question-summary">
@@ -125,7 +125,7 @@ const PythonQuiz = () => {
                         <p>Your final score:</p>
                         <p className="score">{score}/{quizQuestions.length}</p>
                         <p className="feedback">Thank you for participating!</p>
-                        <button onClick={() => window.location.href = '/'}>Return Home</button>
+                        <button onClick={() => window.location.href = '/dashboard'}>Return Home</button>
                     </div>
                 )}
                 <br/>

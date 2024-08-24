@@ -168,7 +168,7 @@ const Dashboard = () => {
           showMessage('Failed to fetch submitted assignments. Please try again.', 'error');
         }
       };
-      
+
       const navigateToQuiz = (quizName) => {
         navigate(`/${quizName}`, { state: { username } });
     };
@@ -187,14 +187,15 @@ const Dashboard = () => {
               <option value="Data Structures">Data Structures</option>
               <option value="Computer Hardware">Computer Hardware</option>
             </select>
+            <br/>
             <input
               type="password"
               placeholder="Enter authorization key"
               value={authKey}
               onChange={(e) => setAuthKey(e.target.value)}
-            />
+            /><br/>
             <input type="file" onChange={handleFileChange} />
-            <button className="upload-button" onClick={handleUpload}>Upload File</button>
+            <button className="upload-button" onClick={handleUpload}>Upload File</button><br/><br/>
             <h3>Uploaded Files:</h3>
             <ul>
               {files.map((file) => (
