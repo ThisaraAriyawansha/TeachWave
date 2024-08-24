@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-import { Chart } from 'react-chartjs-2';
 import './Python.css';
-
-// Register the necessary Chart.js components
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const PythonQuiz = () => {
     const location = useLocation();
@@ -32,7 +27,7 @@ const PythonQuiz = () => {
     ];
 
     const handleAnswer = (index) => {
-        setUserAnswers([...userAnswers, index]);
+        setUserAnswers([...userAnswers, { questionIndex: currentQuestion, answerIndex: index }]);
         if (index === quizQuestions[currentQuestion].correctAnswer) {
             setScore(score + 1);
         }
@@ -62,41 +57,46 @@ const PythonQuiz = () => {
 
     const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
 
-    const data = {
-        labels: ['Answered', 'Remaining'],
-        datasets: [
-            {
-                label: 'Questions',
-                data: [userAnswers.length, quizQuestions.length - userAnswers.length - skippedQuestions.size],
-                backgroundColor: ['#007bff', '#e0e0e0'],
-            },
-        ],
-    };
-
     return (
         <div className="main-container">
-            <div className="sidebar">
-                <div className="sidebar-header">
+            <aside className="sidebar">
+                <header className="sidebar-header">
                     <h2>Python Quiz</h2>
                     <p className="username">{username}</p>
+                </header>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Quiz</a></li>
+                        <li><a href="#">Results</a></li>
+                    </ul>
+                </nav>
+                <div className="question-summary">
+                    <h3>Question Summary</h3>
+                    <ul>
+                        {quizQuestions.map((_, index) => (
+                            <li
+                                key={index}
+                                className={`question-item ${userAnswers.some(answer => answer.questionIndex === index) ? 'answered' : skippedQuestions.has(index) ? 'skipped' : ''}`}
+                                onClick={() => setCurrentQuestion(index)}
+                            >
+                                {index + 1}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                <ul>
-                    <li>Home</li>
-                    <li>Quiz</li>
-                    <li>Results</li>
-                </ul>
-            </div>
-            <div className="content">
-                <ProgressBar now={progress} label={`${currentQuestion + 1}/${quizQuestions.length}`} />
-
-                <div className="chart-container">
-                    <Chart type="bar" data={data} />
+            </aside>
+            <main className="content">
+                <div className="progress-container">
+                    <ProgressBar now={progress} label={`${currentQuestion + 1}/${quizQuestions.length}`} className="progress-bar" />
                 </div>
 
                 {currentQuestion < quizQuestions.length ? (
-                    <div className="quiz-question">
-                        <h3>Question {currentQuestion + 1}</h3>
-                        <p>{quizQuestions[currentQuestion].question}</p>
+                    <section className="quiz-container">
+                        <div className="question-header">
+                            <h3>Question {currentQuestion + 1}</h3>
+                        </div>
+                        <p className="question-text">{quizQuestions[currentQuestion].question}</p>
                         <ul className="quiz-options">
                             {quizQuestions[currentQuestion].options.map((option, index) => (
                                 <li key={index}>
@@ -105,19 +105,25 @@ const PythonQuiz = () => {
                             ))}
                         </ul>
                         <div className="navigation-buttons">
-                            <button onClick={prevQuestion} disabled={currentQuestion === 0}>Back</button>
-                            <button onClick={handleSkip} className="skip-button">Skip Question</button>
-                            <button onClick={nextQuestion} disabled={currentQuestion === quizQuestions.length - 1}>Next</button>
+                            <button onClick={prevQuestion} disabled={currentQuestion === 0} className="nav-button">Back</button>
+                            <button onClick={handleSkip} className="skip-button">Skip</button>
+                            <button onClick={nextQuestion} disabled={currentQuestion === quizQuestions.length - 1} className="nav-button">Next</button>
                         </div>
-                    </div>
+                    </section>
                 ) : (
-                    <div className="quiz-results">
-                        <h3>Your final score: {score}/{quizQuestions.length}</h3>
-                    </div>
+                    <section className="quiz-results">
+                        <h3>Quiz Completed!</h3>
+                        <p>Your final score: <span className="score">{score}/{quizQuestions.length}</span></p>
+                        <p className="feedback">Thank you for participating!</p>
+                    </section>
                 )}
-            </div>
+            </main>
         </div>
     );
 };
 
 export default PythonQuiz;
+
+
+
+
