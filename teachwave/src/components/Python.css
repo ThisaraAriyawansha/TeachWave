@@ -10,7 +10,7 @@ body {
 
 a {
     text-decoration: none;
-    color: #3498db;
+    color: #007aff; /* Apple blue */
 }
 
 a:hover {
@@ -23,11 +23,12 @@ a:hover {
     height: 100vh;
     overflow: hidden;
     background: #ffffff;
+    min-height: 850px;
 }
 
 .sidebar {
     width: 260px;
-    background-color: #ffffff;
+    background-color: #f0f0f5; /* Light gray */
     border-right: 1px solid #e0e0e0;
     padding: 20px;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -59,7 +60,7 @@ nav li {
 }
 
 nav a {
-    color: #3498db;
+    color: #007aff; /* Apple blue */
     font-size: 16px;
     font-weight: 500;
 }
@@ -90,20 +91,20 @@ nav a:hover {
     border-radius: 8px;
     cursor: pointer;
     text-align: center;
-    background-color: #f0f4f8;
+    background-color: #f9f9f9;
     transition: background-color 0.3s;
 }
 
 .question-item.answered {
-    background-color: #d9f7be;
+    background-color: #e3f2fd; /* Light blue */
 }
 
 .question-item.skipped {
-    background-color: #ffebeb;
+    background-color: #ffebee; /* Light red */
 }
 
 .question-item:hover {
-    background-color: #e4e9f0;
+    background-color: #e0e0e0;
 }
 
 /* Main Content */
@@ -118,24 +119,26 @@ nav a:hover {
 }
 
 .progress-bar {
-    background-color: #3498db;
+    background-color: #007aff; /* Apple blue */
     height: 10px;
     border-radius: 5px;
 }
 
 .quiz-container {
     background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.question-header {
-    margin-bottom: 15px;
+.question-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
 }
 
 .question-text {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 20px;
 }
 
@@ -145,75 +148,159 @@ nav a:hover {
     margin: 0;
 }
 
-.quiz-options li {
-    margin-bottom: 12px;
+.option-item {
+    margin-bottom: 15px;
 }
 
-.quiz-options button {
-    background-color: #3498db;
-    color: #ffffff;
-    border: none;
-    padding: 8px 16px; /* Adjusted padding */
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px; /* Adjusted font size */
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-.quiz-options button:hover {
-    background-color: #2980b9;
-}
-
-.navigation-buttons {
+label {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-top: 20px;
 }
 
-.nav-button,
-.skip-button {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    color: #333;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
+.nav-button, .skip-button {
+    background-color: #007aff; /* Apple blue */
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
     font-size: 16px;
-    width: 48%;
+    cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.nav-button:hover,
-.skip-button:hover {
-    background-color: #f0f4f8;
-}
-
-.nav-button:disabled {
-    background-color: #e0e0e0;
+.nav-button:disabled, .skip-button:disabled {
+    background-color: #c6c6c6;
     cursor: not-allowed;
 }
 
-.quiz-results {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.nav-button:hover, .skip-button:hover {
+    background-color: #005cbf;
 }
 
-.quiz-results h3 {
-    margin: 0;
-    font-size: 22px;
-    color: #333;
+.quiz-results {
+    text-align: center;
+    font-size: 18px;
 }
 
 .score {
-    font-weight: bold;
-    font-size: 20px;
-    color: #3498db;
+    font-size: 24px;
+    color: #007aff; /* Apple blue */
 }
 
 .feedback {
-    color: #666;
+    margin-top: 20px;
     font-size: 16px;
+    color: #555;
 }
+
+
+/* Other existing styles... */
+
+.finish-button {
+    background-color: #007aff; /* Apple blue */
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.finish-button:hover {
+    background-color: #005cbf;
+}
+
+/* Styles for the Results link in the sidebar when the quiz is finished */
+.sidebar ul li a {
+    display: block;
+    padding: 10px 0;
+    color: #007aff;
+    font-size: 16px;
+    text-align: left;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+.quiz-results {
+    text-align: center;
+    font-size: 18px;
+}
+
+.score {
+    font-size: 24px;
+    color: #007aff; /* Apple blue */
+}
+
+.feedback {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+
+/* Message Box */
+.message-box {
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.message-box h3 {
+    font-size: 22px;
+    color: #007aff; /* Apple blue */
+    margin-bottom: 15px;
+}
+
+.message-box p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.message-box .score {
+    font-size: 26px;
+    color: #007aff; /* Apple blue */
+    margin-bottom: 20px;
+}
+
+.message-box .feedback {
+    font-size: 16px;
+    color: #555;
+}
+
+.message-box button {
+    background-color: #007aff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.message-box button:hover {
+    background-color: #005cbf;
+}
+

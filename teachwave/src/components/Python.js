@@ -12,6 +12,7 @@ const PythonQuiz = () => {
     const [score, setScore] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
     const [skippedQuestions, setSkippedQuestions] = useState(new Set());
+    const [quizFinished, setQuizFinished] = useState(false);
 
     const quizQuestions = [
         { question: 'What is the output of print(2 ** 3)?', options: ['6', '8', '9', '12'], correctAnswer: 1 },
@@ -44,7 +45,7 @@ const PythonQuiz = () => {
         if (nextQuestionIndex < quizQuestions.length) {
             setCurrentQuestion(nextQuestionIndex);
         } else {
-            alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
+            finishQuiz();
         }
     };
 
@@ -53,6 +54,10 @@ const PythonQuiz = () => {
         if (prevQuestionIndex >= 0) {
             setCurrentQuestion(prevQuestionIndex);
         }
+    };
+
+    const finishQuiz = () => {
+        setQuizFinished(true);
     };
 
     const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
@@ -67,8 +72,6 @@ const PythonQuiz = () => {
                 <nav>
                     <ul>
                         <li><a href="#">Home</a></li>
-                        <li><a href="#">Quiz</a></li>
-                        <li><a href="#">Results</a></li>
                     </ul>
                 </nav>
                 <div className="question-summary">
@@ -87,11 +90,7 @@ const PythonQuiz = () => {
                 </div>
             </aside>
             <main className="content">
-                <div className="progress-container">
-                    <ProgressBar now={progress} label={`${currentQuestion + 1}/${quizQuestions.length}`} className="progress-bar" />
-                </div>
-
-                {currentQuestion < quizQuestions.length ? (
+                {!quizFinished ? (
                     <section className="quiz-container">
                         <div className="question-header">
                             <h3>Question {currentQuestion + 1}</h3>
@@ -99,31 +98,43 @@ const PythonQuiz = () => {
                         <p className="question-text">{quizQuestions[currentQuestion].question}</p>
                         <ul className="quiz-options">
                             {quizQuestions[currentQuestion].options.map((option, index) => (
-                                <li key={index}>
-                                    <button onClick={() => handleAnswer(index)}>{option}</button>
+                                <li key={index} className="option-item">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name={`question${currentQuestion}`}
+                                            value={index}
+                                            checked={userAnswers.some(answer => answer.questionIndex === currentQuestion && answer.answerIndex === index)}
+                                            onChange={() => handleAnswer(index)}
+                                        />
+                                        {option}
+                                    </label>
                                 </li>
                             ))}
                         </ul>
-                        <div className="navigation-buttons">
+                        <div className="button-group">
                             <button onClick={prevQuestion} disabled={currentQuestion === 0} className="nav-button">Back</button>
                             <button onClick={handleSkip} className="skip-button">Skip</button>
                             <button onClick={nextQuestion} disabled={currentQuestion === quizQuestions.length - 1} className="nav-button">Next</button>
+                            <button onClick={finishQuiz} className="finish-button">Finish</button>
                         </div>
                     </section>
                 ) : (
-                    <section className="quiz-results">
+                    <div className="message-box">
                         <h3>Quiz Completed!</h3>
-                        <p>Your final score: <span className="score">{score}/{quizQuestions.length}</span></p>
+                        <p>Your final score:</p>
+                        <p className="score">{score}/{quizQuestions.length}</p>
                         <p className="feedback">Thank you for participating!</p>
-                    </section>
+                        <button onClick={() => window.location.href = '/'}>Return Home</button>
+                    </div>
                 )}
+                <br/>
+                <div className="progress-container">
+                    <ProgressBar now={progress} label={`${currentQuestion + 1}/${quizQuestions.length}`} className="progress-bar" />
+                </div>
             </main>
         </div>
     );
 };
 
 export default PythonQuiz;
-
-
-
-
