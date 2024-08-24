@@ -168,6 +168,10 @@ const Dashboard = () => {
           showMessage('Failed to fetch submitted assignments. Please try again.', 'error');
         }
       };
+      
+      const navigateToQuiz = (quizName) => {
+        navigate(`/${quizName}`, { state: { username } });
+    };
 
   const renderContent = () => {
     switch (selectedSection) {
@@ -262,23 +266,39 @@ const Dashboard = () => {
                         )}
                     </div>
                 );
-      case 'TakeQuiz':
-        return (
-          <div className="content-section">
-            <h2>Take Quiz</h2>
-            <form>
-              <label>
-                Quiz Title:
-                <input type="text" placeholder="Enter quiz title" />
-              </label>
-              <label>
-                Number of Questions:
-                <input type="number" placeholder="Enter number of questions" />
-              </label>
-              <button type="submit" className="start-quiz-button">Start Quiz</button>
-            </form>
-          </div>
-        );
+                case 'TakeQuiz':
+                  return (
+                      <div className="content-section">
+                          <h2>Take Quiz</h2>
+                          <div className="quiz-section">
+                              <div className="quiz-item">
+                                  <h3>Python Programming</h3>
+                                  <p>Test your knowledge in Python Programming.</p>
+                                  <button className="quiz-button" onClick={() => navigateToQuiz('Python')}>Take Quiz</button>
+                              </div>
+                              <div className="quiz-item">
+                                  <h3>Internet of Things (IoT)</h3>
+                                  <p>Test your knowledge in IoT.</p>
+                                  <button className="quiz-button" onClick={() => navigateToQuiz('IOT')}>Take Quiz</button>
+                              </div>
+                              <div className="quiz-item">
+                                  <h3>Data Structures</h3>
+                                  <p>Test your knowledge in Data Structures.</p>
+                                  <button className="quiz-button" onClick={() => navigateToQuiz('DataStructures')}>Take Quiz</button>
+                              </div>
+                              <div className="quiz-item">
+                                  <h3>Software Engineering</h3>
+                                  <p>Test your knowledge in Software Engineering.</p>
+                                  <button className="quiz-button" onClick={() => navigateToQuiz('SoftwareEngineering')}>Take Quiz</button>
+                              </div>
+                              <div className="quiz-item">
+                                  <h3>Computer Hardware</h3>
+                                  <p>Test your knowledge in Computer Hardware.</p>
+                                  <button className="quiz-button" onClick={() => navigateToQuiz('ComputerHardware')}>Take Quiz</button>
+                              </div>
+                          </div>
+                      </div>
+                  );
       case 'RateCourse':
         return (
           <div className="content-section">
