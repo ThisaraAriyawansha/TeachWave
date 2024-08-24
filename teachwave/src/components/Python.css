@@ -1,50 +1,127 @@
-.quiz-container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
+/* General Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
 }
 
-.quiz-question {
+.main-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
     margin-bottom: 20px;
 }
 
-.quiz-options {
-    list-style: none;
-    padding: 0;
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
 }
 
-.quiz-options li {
+.sidebar-header .username {
+    font-size: 1.1rem;
+    color: #007bff;
+    margin-top: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.content {
+    margin-left: 270px;
+    padding: 20px;
+    flex: 1;
+}
+
+.quiz-container {
+    padding: 20px;
+}
+
+.quiz-question h3 {
     margin-bottom: 10px;
 }
 
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.quiz-options li {
+    list-style-type: none;
+    margin-bottom: 10px;
 }
 
-button:hover {
+.quiz-options button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.quiz-options button:hover {
     background-color: #0056b3;
 }
 
 .skip-button {
-    background-color: #ffc107;
+    background-color: #6c757d;
 }
 
 .skip-button:hover {
-    background-color: #e0a800;
+    background-color: #5a6268;
+}
+
+.navigation-buttons {
+    margin-top: 20px;
+}
+
+.navigation-buttons button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.navigation-buttons button:hover {
+    background-color: #0056b3;
+}
+
+.navigation-buttons button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 .quiz-results {
     text-align: center;
+    margin-top: 20px;
 }
 
 .chart-container {
-    margin: 20px 0;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
 }

@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { ProgressBar } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { Chart } from 'react-chartjs-2';
 import './Python.css';
+
+// Register the necessary Chart.js components
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const PythonQuiz = () => {
     const location = useLocation();
@@ -9,58 +16,19 @@ const PythonQuiz = () => {
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
+    const [skippedQuestions, setSkippedQuestions] = useState(new Set());
 
     const quizQuestions = [
-        {
-            question: "What is the correct syntax to output 'Hello World' in Python?",
-            options: ["echo 'Hello World'", "print('Hello World')", "console.log('Hello World')", "cout << 'Hello World'"],
-            correctAnswer: 1
-        },
-        {
-            question: "How do you create a variable with the numeric value 5?",
-            options: ["x = 5", "int x = 5", "x = int(5)", "All of the above"],
-            correctAnswer: 0
-        },
-        {
-            question: "Which operator is used to calculate the remainder in Python?",
-            options: ["%", "//", "&", "/"],
-            correctAnswer: 0
-        },
-        {
-            question: "What is the correct syntax for defining a function in Python?",
-            options: ["def function_name():", "function function_name():", "define function_name():", "func function_name():"],
-            correctAnswer: 0
-        },
-        {
-            question: "Which of the following is a mutable data type in Python?",
-            options: ["tuple", "list", "string", "int"],
-            correctAnswer: 1
-        },
-        {
-            question: "How do you insert comments in Python code?",
-            options: ["// Comment", "# Comment", "<!-- Comment -->", "/* Comment */"],
-            correctAnswer: 1
-        },
-        {
-            question: "What keyword is used to handle exceptions in Python?",
-            options: ["catch", "try", "except", "finally"],
-            correctAnswer: 2
-        },
-        {
-            question: "How do you start a for loop in Python?",
-            options: ["for i in range(0, 10):", "for i = 0; i < 10; i++:", "loop i from 0 to 10:", "foreach i in range(10):"],
-            correctAnswer: 0
-        },
-        {
-            question: "What is the output of the expression 5 ** 2 in Python?",
-            options: ["25", "10", "5", "55"],
-            correctAnswer: 0
-        },
-        {
-            question: "Which method can be used to remove whitespace from the beginning and end of a string?",
-            options: ["strip()", "trim()", "remove()", "cut()"],
-            correctAnswer: 0
-        }
+        { question: 'What is the output of print(2 ** 3)?', options: ['6', '8', '9', '12'], correctAnswer: 1 },
+        { question: 'What keyword is used to define a function in Python?', options: ['function', 'def', 'func', 'define'], correctAnswer: 1 },
+        { question: 'Which of the following is mutable in Python?', options: ['String', 'Tuple', 'List', 'Integer'], correctAnswer: 2 },
+        { question: 'What is the output of len("hello")?', options: ['4', '5', '6', 'None'], correctAnswer: 1 },
+        { question: 'How do you start a comment in Python?', options: ['#', '//', '/*', '<!--'], correctAnswer: 0 },
+        { question: 'What is the default return value of a function in Python?', options: ['0', 'None', 'False', 'Null'], correctAnswer: 1 },
+        { question: 'How do you include a module in Python?', options: ['import module', 'include module', 'require module', 'using module'], correctAnswer: 0 },
+        { question: 'Which method is used to remove whitespace from the beginning and end of a string?', options: ['strip()', 'trim()', 'cut()', 'delete()'], correctAnswer: 0 },
+        { question: 'What type of error is raised for invalid syntax?', options: ['RuntimeError', 'SyntaxError', 'NameError', 'TypeError'], correctAnswer: 1 },
+        { question: 'Which data structure does not allow duplicates?', options: ['List', 'Set', 'Tuple', 'Dictionary'], correctAnswer: 1 },
     ];
 
     const handleAnswer = (index) => {
@@ -68,36 +36,86 @@ const PythonQuiz = () => {
         if (index === quizQuestions[currentQuestion].correctAnswer) {
             setScore(score + 1);
         }
+        nextQuestion();
+    };
 
-        const nextQuestion = currentQuestion + 1;
-        if (nextQuestion < quizQuestions.length) {
-            setCurrentQuestion(nextQuestion);
+    const handleSkip = () => {
+        setSkippedQuestions(new Set(skippedQuestions.add(currentQuestion)));
+        nextQuestion();
+    };
+
+    const nextQuestion = () => {
+        const nextQuestionIndex = currentQuestion + 1;
+        if (nextQuestionIndex < quizQuestions.length) {
+            setCurrentQuestion(nextQuestionIndex);
         } else {
-            alert(`Quiz completed! Your score: ${score + 1}/${quizQuestions.length}`);
+            alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
         }
     };
 
-    return (
-        <div className="quiz-container">
-            <h2>Python Programming Quiz</h2>
-            <p>Welcome, {username}! Let's test your Python skills.</p>
+    const prevQuestion = () => {
+        const prevQuestionIndex = currentQuestion - 1;
+        if (prevQuestionIndex >= 0) {
+            setCurrentQuestion(prevQuestionIndex);
+        }
+    };
 
-            {currentQuestion < quizQuestions.length ? (
-                <div className="quiz-question">
-                    <h3>{quizQuestions[currentQuestion].question}</h3>
-                    <ul className="quiz-options">
-                        {quizQuestions[currentQuestion].options.map((option, index) => (
-                            <li key={index}>
-                                <button onClick={() => handleAnswer(index)}>{option}</button>
-                            </li>
-                        ))}
-                    </ul>
+    const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+
+    const data = {
+        labels: ['Answered', 'Remaining'],
+        datasets: [
+            {
+                label: 'Questions',
+                data: [userAnswers.length, quizQuestions.length - userAnswers.length - skippedQuestions.size],
+                backgroundColor: ['#007bff', '#e0e0e0'],
+            },
+        ],
+    };
+
+    return (
+        <div className="main-container">
+            <div className="sidebar">
+                <div className="sidebar-header">
+                    <h2>Python Quiz</h2>
+                    <p className="username">{username}</p>
                 </div>
-            ) : (
-                <div className="quiz-results">
-                    <h3>Your final score: {score}/{quizQuestions.length}</h3>
+                <ul>
+                    <li>Home</li>
+                    <li>Quiz</li>
+                    <li>Results</li>
+                </ul>
+            </div>
+            <div className="content">
+                <ProgressBar now={progress} label={`${currentQuestion + 1}/${quizQuestions.length}`} />
+
+                <div className="chart-container">
+                    <Chart type="bar" data={data} />
                 </div>
-            )}
+
+                {currentQuestion < quizQuestions.length ? (
+                    <div className="quiz-question">
+                        <h3>Question {currentQuestion + 1}</h3>
+                        <p>{quizQuestions[currentQuestion].question}</p>
+                        <ul className="quiz-options">
+                            {quizQuestions[currentQuestion].options.map((option, index) => (
+                                <li key={index}>
+                                    <button onClick={() => handleAnswer(index)}>{option}</button>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="navigation-buttons">
+                            <button onClick={prevQuestion} disabled={currentQuestion === 0}>Back</button>
+                            <button onClick={handleSkip} className="skip-button">Skip Question</button>
+                            <button onClick={nextQuestion} disabled={currentQuestion === quizQuestions.length - 1}>Next</button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="quiz-results">
+                        <h3>Your final score: {score}/{quizQuestions.length}</h3>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
