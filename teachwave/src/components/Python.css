@@ -96,7 +96,7 @@ nav a:hover {
 }
 
 .question-item.answered {
-    background-color: #e3f2fd; /* Light blue */
+    background-color: #88c9f7; /* Light blue */
 }
 
 .question-item.skipped {
@@ -304,3 +304,18 @@ input[type="radio"] {
     background-color: #005cbf;
 }
 
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .results-table th {
+    background-color: #f2f2f2;
+  }
+  

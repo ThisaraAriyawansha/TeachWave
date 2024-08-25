@@ -18,8 +18,18 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [isSessionJoined, setIsSessionJoined] = useState(false);
     const [roomName, setRoomName] = useState(''); // This will be the room name for Jitsi
+    const [certificateSubject, setCertificateSubject] = useState('');
 
   
+
+    useEffect(() => {
+      if (selectedSection === 'Result') {
+        fetchResults();
+      }
+    }, [selectedSection]);
+    
+
+
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
         if (storedUsername) {
@@ -46,6 +56,18 @@ const Dashboard = () => {
         localStorage.removeItem('username');
         navigate('/create-account');
       };
+
+
+      const handleGenerateCertificate = async () => {
+        try {
+            const response = await axios.post('/generate-certificate', { subject: certificateSubject });
+            setMessage('Certificate generated successfully');
+            setMessageType('success');
+        } catch (error) {
+            setMessage('Error generating certificate');
+            setMessageType('error');
+        }
+    };
     
       const handleSubjectChange = (event) => {
         setSelectedSubject(event.target.value);
@@ -107,7 +129,20 @@ const Dashboard = () => {
         }
       };
       
-    
+    const [courseResults, setCourseResults] = useState([]);
+
+const fetchResults = async () => {
+  try {
+    const response = await axios.get(`http://localhost:5000/results/${username}`);
+    setCourseResults(response.data);
+  } catch (error) {
+    console.error('Error fetching results:', error);
+    showMessage('Failed to fetch course results. Please try again.', 'error');
+  }
+};
+
+
+
       const handleDelete = async (fileId) => {
         try {
           const token = localStorage.getItem('token');
@@ -182,7 +217,7 @@ const Dashboard = () => {
             <select value={selectedSubject} onChange={handleSubjectChange}>
               <option value="">Select Subject</option>
               <option value="Introduction to Software Engineering">Introduction to Software Engineering</option>
-              <option value="IoT">IoT</option>
+              <option value="IoT">Internet of Things</option>
               <option value="Python Programming">Python Programming</option>
               <option value="Data Structures">Data Structures</option>
               <option value="Computer Hardware">Computer Hardware</option>
@@ -278,8 +313,8 @@ const Dashboard = () => {
                                   <button className="quiz-button" onClick={() => navigateToQuiz('Python')}>Take Quiz</button>
                               </div>
                               <div className="quiz-item">
-                                  <h3>Internet of Things (IoT)</h3>
-                                  <p>Test your knowledge in IoT.</p>
+                                  <h3>Internet of Things (IOT)</h3>
+                                  <p>Test your knowledge in Internet of Things.</p>
                                   <button className="quiz-button" onClick={() => navigateToQuiz('IOT')}>Take Quiz</button>
                               </div>
                               <div className="quiz-item">
@@ -300,6 +335,49 @@ const Dashboard = () => {
                           </div>
                       </div>
                   );
+
+
+                  case 'Result':
+                    return (
+                        <div className="content-section">
+                            <h2>View Course Result</h2>
+                            {courseResults.length > 0 ? (
+                                <table className="results-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {courseResults.map((result) => (
+                                            <tr key={result._id}>
+                                                <td>{result.subject}</td>
+                                                <td>{result.score}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <p>No results available.</p>
+                            )}
+                        </div>
+                    );
+                case 'GenerateCertificate':
+                    return (
+                        <div className="content-section">
+                            <h2>Generate Certificate</h2>
+                            <input
+                                type="text"
+                                placeholder="Enter subject name"
+                                value={certificateSubject}
+                                onChange={(e) => setCertificateSubject(e.target.value)}
+                            />
+                            <button className="generate-button" onClick={handleGenerateCertificate}>Generate Certificate</button>
+                        </div>
+                    );
+       
+
       case 'RateCourse':
         return (
           <div className="content-section">
@@ -337,6 +415,9 @@ const Dashboard = () => {
                 <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
                 <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
                 <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
+                <li className={selectedSection === 'Result' ? 'active' : ''} onClick={() => setSelectedSection('Result')}>View Course Result</li>
+                <li className={selectedSection === 'GenerateCertificate' ? 'active' : ''} onClick={() => setSelectedSection('GenerateCertificate')}>Generate Certificate</li>
+
                 <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
             </ul>
             <button className="logout-button" onClick={handleLogout}>Logout</button>

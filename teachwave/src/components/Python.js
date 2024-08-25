@@ -35,6 +35,8 @@ const PythonQuiz = () => {
         nextQuestion();
     };
 
+
+    
     const handleSkip = () => {
         setSkippedQuestions(new Set(skippedQuestions.add(currentQuestion)));
         nextQuestion();
@@ -56,8 +58,25 @@ const PythonQuiz = () => {
         }
     };
 
-    const finishQuiz = () => {
+    const finishQuiz = async () => {
         setQuizFinished(true);
+        try {
+            const response = await fetch('http://localhost:5000/submit-quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    subject: 'Python',
+                    score,
+                }),
+            });
+            const data = await response.json();
+            console.log(data.message);
+        } catch (error) {
+            console.error('Error submitting quiz:', error);
+        }
     };
 
     const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;

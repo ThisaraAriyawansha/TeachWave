@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+
+// Define QuizResult model
+const quizResultSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  subject: { type: String, required: true },
+  score: { type: Number, required: true },
+  date: { type: Date, default: Date.now },
+});
+
+const QuizResult = mongoose.model('QuizResult', quizResultSchema);
+
+
 // Define File model
 const fileSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -205,6 +217,50 @@ app.get('/submitted-assignments/:username', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
+
+// Submit quiz result route
+app.post('/submit-quiz', async (req, res) => {
+  try {
+    const { username, subject, score } = req.body;
+    const quizResult = new QuizResult({ username, subject, score });
+    await quizResult.save();
+    res.status(201).json({ message: 'Quiz result saved successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+// Fetch quiz results by username
+app.get('/results/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const results = await QuizResult.find({ username });
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+app.post('/generate-certificate', (req, res) => {
+  const { subject } = req.body;
+
+  const doc = new pdf();
+  doc.pipe(fs.createWriteStream(`certificates/${subject}.pdf`));
+  doc.fontSize(25).text(`Certificate of Completion`, { align: 'center' });
+  doc.fontSize(20).text(`This is to certify that`, { align: 'center' });
+  doc.fontSize(18).text(`has successfully completed the course on ${subject}`, { align: 'center' });
+  doc.end();
+
+  res.status(200).send('Certificate generated successfully');
+});
+
 
 // Start server
 app.listen(port, () => {

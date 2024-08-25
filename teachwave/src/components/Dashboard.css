@@ -262,3 +262,9 @@
   background-color: #0056b3;
   transform: scale(1.05);
 }
+
+.generate-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
