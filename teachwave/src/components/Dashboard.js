@@ -367,12 +367,6 @@ const fetchResults = async () => {
                     return (
                         <div className="content-section">
                             <h2>Generate Certificate</h2>
-                            <input
-                                type="text"
-                                placeholder="Enter subject name"
-                                value={certificateSubject}
-                                onChange={(e) => setCertificateSubject(e.target.value)}
-                            />
                             <button className="generate-button" onClick={handleGenerateCertificate}>Generate Certificate</button>
                         </div>
                     );
