@@ -354,6 +354,7 @@ const fetchResults = async () => {
                                             <tr key={result._id}>
                                                 <td>{result.subject}</td>
                                                 <td>{result.score}</td>
+                                                <td><button>Generate Certificate</button></td>
                                             </tr>
                                         ))}
                                     </tbody>
