@@ -58,16 +58,22 @@ const Dashboard = () => {
       };
 
 
-      const handleGenerateCertificate = async () => {
+      const handleGenerateCertificate = async (subject) => {
         try {
-            const response = await axios.post('/generate-certificate', { subject: certificateSubject });
-            setMessage('Certificate generated successfully');
-            setMessageType('success');
+          const response = await axios.post('/generate-certificate', { subject });
+          const fileUrl = response.data.filePath;
+          showMessage('Certificate generated successfully', 'success');
+          // Open the certificate for download
+          window.open(`http://localhost:5000${fileUrl}`, '_blank');
         } catch (error) {
-            setMessage('Error generating certificate');
-            setMessageType('error');
+          showMessage('Error generating certificate', 'error');
         }
-    };
+      };
+      
+
+
+
+ 
     
       const handleSubjectChange = (event) => {
         setSelectedSubject(event.target.value);
@@ -339,31 +345,39 @@ const fetchResults = async () => {
 
                   case 'Result':
                     return (
-                        <div className="content-section">
-                            <h2>View Course Result</h2>
-                            {courseResults.length > 0 ? (
-                                <table className="results-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Subject</th>
-                                            <th>Score</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {courseResults.map((result) => (
-                                            <tr key={result._id}>
-                                                <td>{result.subject}</td>
-                                                <td>{result.score}</td>
-                                                <td><button>Generate Certificate</button></td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <p>No results available.</p>
-                            )}
-                        </div>
+                      <div className="content-section">
+                        <h2>View Course Result</h2>
+                        {courseResults.length > 0 ? (
+                          <table className="results-table">
+                            <thead>
+                              <tr>
+                                <th>Subject</th>
+                                <th>Score</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {courseResults.map((result) => (
+                                <tr key={result._id}>
+                                  <td>{result.subject}</td>
+                                  <td>{result.score}</td>
+                                  <td>
+                                    <button
+                                      onClick={() => handleGenerateCertificate(result.subject)}
+                                    >
+                                      Generate Certificate
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <p>No results available.</p>
+                        )}
+                      </div>
                     );
+                  
 
 
       case 'RateCourse':

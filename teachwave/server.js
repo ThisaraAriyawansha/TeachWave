@@ -249,17 +249,24 @@ app.get('/results/:username', async (req, res) => {
 
 
 app.post('/generate-certificate', (req, res) => {
+  console.log('Received request to generate certificate');
   const { subject } = req.body;
+  // Ensure req.user is set if used
+  // const username = req.user.username; 
 
-  const doc = new pdf();
-  doc.pipe(fs.createWriteStream(`certificates/${subject}.pdf`));
-  doc.fontSize(25).text(`Certificate of Completion`, { align: 'center' });
-  doc.fontSize(20).text(`This is to certify that`, { align: 'center' });
-  doc.fontSize(18).text(`has successfully completed the course on ${subject}`, { align: 'center' });
+  const doc = new PDFDocument();
+  const filePath = path.join(__dirname, 'certificates', `certificate-${subject}.pdf`);
+
+  doc.pipe(fs.createWriteStream(filePath));
+  doc.fontSize(25).text('Certificate of Completion', { align: 'center' });
+  doc.fontSize(20).text(`Subject: ${subject}`, { align: 'center' });
+  // If req.user is used:
+  // doc.fontSize(20).text(`User: ${username}`, { align: 'center' });
   doc.end();
 
-  res.status(200).send('Certificate generated successfully');
+  res.json({ filePath });
 });
+
 
 
 // Start server
