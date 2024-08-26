@@ -363,14 +363,7 @@ const fetchResults = async () => {
                             )}
                         </div>
                     );
-                case 'GenerateCertificate':
-                    return (
-                        <div className="content-section">
-                            <h2>Generate Certificate</h2>
-                            <button className="generate-button" onClick={handleGenerateCertificate}>Generate Certificate</button>
-                        </div>
-                    );
-       
+
 
       case 'RateCourse':
         return (
@@ -410,7 +403,6 @@ const fetchResults = async () => {
                 <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
                 <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
                 <li className={selectedSection === 'Result' ? 'active' : ''} onClick={() => setSelectedSection('Result')}>View Course Result</li>
-                <li className={selectedSection === 'GenerateCertificate' ? 'active' : ''} onClick={() => setSelectedSection('GenerateCertificate')}>Generate Certificate</li>
 
                 <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
             </ul>
