@@ -7,6 +7,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+
+
+const PDFDocument = require('pdfkit');
+
+
 const app = express();
 const port = 5000;
 
@@ -251,21 +256,24 @@ app.get('/results/:username', async (req, res) => {
 app.post('/generate-certificate', (req, res) => {
   console.log('Received request to generate certificate');
   const { subject } = req.body;
-  // Ensure req.user is set if used
-  // const username = req.user.username; 
+
+  // Ensure the certificates directory exists
+  const certificatesDir = path.join(__dirname, 'certificates');
+  if (!fs.existsSync(certificatesDir)) {
+    fs.mkdirSync(certificatesDir);
+  }
 
   const doc = new PDFDocument();
-  const filePath = path.join(__dirname, 'certificates', `certificate-${subject}.pdf`);
+  const filePath = path.join(certificatesDir, `certificate-${subject}.pdf`);
 
   doc.pipe(fs.createWriteStream(filePath));
   doc.fontSize(25).text('Certificate of Completion', { align: 'center' });
   doc.fontSize(20).text(`Subject: ${subject}`, { align: 'center' });
-  // If req.user is used:
-  // doc.fontSize(20).text(`User: ${username}`, { align: 'center' });
   doc.end();
 
   res.json({ filePath });
 });
+
 
 
 
