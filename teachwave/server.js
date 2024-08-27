@@ -257,80 +257,97 @@ if (!fs.existsSync(certificatesDir)) {
     fs.mkdirSync(certificatesDir);
 }
 
-// Endpoint to generate and download the certificate
 app.get('/generate-certificate/:subject/:username', (req, res) => {
-    const { subject, username } = req.params;
+  const { subject, username } = req.params;
 
-    console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
+  console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
 
-    try {
-        // Create a PDF document in landscape format
-        const doc = new PDFDocument({
-            size: [842, 595], // A4 landscape dimensions in points
-            margin: 50
-        });
-        const fileName = `Certificate-${username}-${subject}.pdf`;
-        const filePath = path.join(certificatesDir, fileName);
+  try {
+      // Create a PDF document in landscape format
+      const doc = new PDFDocument({
+          size: [842, 595], // A4 landscape dimensions in points
+          margin: 50
+      });
+      const fileName = `Certificate-${username}-${subject}.pdf`;
+      const filePath = path.join(certificatesDir, fileName);
 
-        // Pipe the PDF into a file
-        doc.pipe(fs.createWriteStream(filePath));
+      // Pipe the PDF into a file
+      doc.pipe(fs.createWriteStream(filePath));
 
-        // Add a background color
-        doc.rect(0, 0, 842, 595).fill('#f4f4f4');
+      // Add a background color
+      doc.rect(0, 0, 842, 595).fill('#f4f4f4');
 
-        // Add a border around the certificate
-        doc.strokeColor('#4A90E2')
-           .lineWidth(5)
-           .rect(50, 50, 742, 495) // Draw a border
-           .stroke();
+      // Add a border around the certificate
+      doc.strokeColor('#4A90E2')
+         .lineWidth(5)
+         .rect(50, 50, 742, 495) // Draw a border
+         .stroke();
 
-        // Add content to the PDF
-        doc.fillColor('#4A90E2')
-           .fontSize(32)
-           .font('Helvetica-Bold')
-           .text('TeachWave', { align: 'center', continued: true })
-           .moveDown(1);
+      // Add a checkmark icon
+      doc.fillColor('#4A90E2')
+         .fontSize(32)
+         .text('✔', 50, 50); // Checkmark icon
 
-        doc.fillColor('#333333')
-           .fontSize(26)
-           .text('Certificate of Completion', { align: 'center' })
-           .moveDown(2);
+      // Add header text
+      doc.fillColor('#4A90E2')
+         .fontSize(32)
+         .font('Helvetica-Bold')
+         .text('TeachWave', { align: 'center' })
+         .moveDown(1);
 
-        doc.fontSize(20)
-           .text('This is to certify that', { align: 'center' })
-           .moveDown(1);
+      // Certificate Title
+      doc.fillColor('#333333')
+         .fontSize(26)
+         .text('Certificate of Completion', { align: 'center' })
+         .moveDown(2);
 
-        doc.fontSize(24)
-           .text(username, { align: 'center', underline: true })
-           .moveDown(1);
+      // Certificate Content
+      doc.fontSize(20)
+         .text('This is to certify that', { align: 'center' })
+         .moveDown(1);
 
-        doc.fontSize(20)
-           .text('has successfully completed the', { align: 'center' })
-           .moveDown(1);
+      doc.fontSize(24)
+         .text(username, { align: 'center', underline: true })
+         .moveDown(1);
 
-        doc.fontSize(24)
-           .text(subject, { align: 'center', underline: true })
-           .moveDown(3);
+      doc.fontSize(20)
+         .text('has successfully completed the', { align: 'center' })
+         .moveDown(1);
 
-        doc.fontSize(16)
-           .text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
+      doc.fontSize(24)
+         .text(subject, { align: 'center', underline: true })
+         .moveDown(3);
 
-        // Finalize the PDF and end the stream
-        doc.end();
+      doc.fontSize(16)
+         .text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
 
-        // Send the PDF as a response
-        res.download(filePath, (err) => {
-            if (err) {
-                console.error('Error sending file:', err);
-                res.status(500).send('Error generating certificate');
-            }
-        });
-    } catch (error) {
-        console.error('Error generating certificate:', error);
-        res.status(500).send('Error generating certificate');
-    }
+      // Add footer with contact info
+      doc.fontSize(12)
+         .fillColor('#4A90E2')
+         .text('For more information, visit www.teachwave.com', 50, 550, { align: 'center' });
+
+      // Add a decorative line
+      doc.strokeColor('#4A90E2')
+         .lineWidth(2)
+         .moveTo(50, 500)
+         .lineTo(792, 500)
+         .stroke();
+
+      // Finalize the PDF and end the stream
+      doc.end();
+
+      // Send the PDF as a response
+      res.download(filePath, (err) => {
+          if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).send('Error generating certificate');
+          }
+      });
+  } catch (error) {
+      console.error('Error generating certificate:', error);
+      res.status(500).send('Error generating certificate');
+  }
 });
-
 
 
 
