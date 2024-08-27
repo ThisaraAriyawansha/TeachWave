@@ -251,10 +251,9 @@ app.get('/results/:username', async (req, res) => {
   }
 });
 
-
 // Ensure the 'certificates' directory exists
 const certificatesDir = path.join(__dirname, 'certificates');
-if (!fs.existsSync(certificatesDir)){
+if (!fs.existsSync(certificatesDir)) {
     fs.mkdirSync(certificatesDir);
 }
 
@@ -265,23 +264,56 @@ app.get('/generate-certificate/:subject/:username', (req, res) => {
     console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
 
     try {
-        // Create a PDF document
-        const doc = new PDFDocument();
+        // Create a PDF document in landscape format
+        const doc = new PDFDocument({
+            size: [842, 595], // A4 landscape dimensions in points
+            margin: 50
+        });
         const fileName = `Certificate-${username}-${subject}.pdf`;
         const filePath = path.join(certificatesDir, fileName);
 
         // Pipe the PDF into a file
         doc.pipe(fs.createWriteStream(filePath));
 
+        // Add a background color
+        doc.rect(0, 0, 842, 595).fill('#f4f4f4');
+
+        // Add a border around the certificate
+        doc.strokeColor('#4A90E2')
+           .lineWidth(5)
+           .rect(50, 50, 742, 495) // Draw a border
+           .stroke();
+
         // Add content to the PDF
-        doc.fontSize(25).text('Certificate of Completion', { align: 'center' });
-        doc.moveDown();
-        doc.fontSize(20).text(`This is to certify that`, { align: 'center' });
-        doc.fontSize(20).text(username, { align: 'center' });
-        doc.fontSize(20).text(`has successfully completed the`, { align: 'center' });
-        doc.fontSize(20).text(subject, { align: 'center' });
-        doc.moveDown();
-        doc.fontSize(15).text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
+        doc.fillColor('#4A90E2')
+           .fontSize(32)
+           .font('Helvetica-Bold')
+           .text('TeachWave', { align: 'center', continued: true })
+           .moveDown(1);
+
+        doc.fillColor('#333333')
+           .fontSize(26)
+           .text('Certificate of Completion', { align: 'center' })
+           .moveDown(2);
+
+        doc.fontSize(20)
+           .text('This is to certify that', { align: 'center' })
+           .moveDown(1);
+
+        doc.fontSize(24)
+           .text(username, { align: 'center', underline: true })
+           .moveDown(1);
+
+        doc.fontSize(20)
+           .text('has successfully completed the', { align: 'center' })
+           .moveDown(1);
+
+        doc.fontSize(24)
+           .text(subject, { align: 'center', underline: true })
+           .moveDown(3);
+
+        doc.fontSize(16)
+           .text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
 
         // Finalize the PDF and end the stream
         doc.end();
@@ -298,6 +330,9 @@ app.get('/generate-certificate/:subject/:username', (req, res) => {
         res.status(500).send('Error generating certificate');
     }
 });
+
+
+
 
 // Start server
 app.listen(port, () => {
