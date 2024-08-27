@@ -36,3 +36,24 @@
     color: #007aff;
   }
   
+  /* Article Author */
+.article-author {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+  
+  /* Article Content Titles */
+  .article-content strong {
+    display: block;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  /* Article Content */
+  .article-content p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+  }
+  
