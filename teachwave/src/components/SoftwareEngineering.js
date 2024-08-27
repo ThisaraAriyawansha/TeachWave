@@ -58,6 +58,11 @@ const SoftwareEngineeringQuiz = () => {
 
     const finishQuiz = async () => {
         setQuizFinished(true);
+    
+        // Increment the score by 1 before sending
+        const finalScore = score + 1;
+        console.log("Final score before sending:", finalScore); // Log final score before sending
+    
         try {
             const response = await fetch('http://localhost:5000/submit-quiz', {
                 method: 'POST',
@@ -67,11 +72,12 @@ const SoftwareEngineeringQuiz = () => {
                 body: JSON.stringify({
                     username,
                     subject: 'Software Engineering',
-                    score,
+                    score: finalScore,  // Use the incremented score here
                 }),
             });
+    
             const data = await response.json();
-            console.log(data.message);
+            console.log('Backend response:', data.message);
         } catch (error) {
             console.error('Error submitting quiz:', error);
         }
