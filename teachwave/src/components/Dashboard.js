@@ -24,18 +24,19 @@ const Dashboard = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [relatedArticles, setRelatedArticles] = useState([]);
 
-  // NewsAPI Configuration
-  const newsApiKey = '9bf1b1542d2c49f2a3e5758a86cfc80e'; // Replace with your NewsAPI key
-  const newsApiUrl = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=' + newsApiKey;
-
-  useEffect(() => {
-      if (selectedSection === 'Result') {
-          fetchResults();
-      }
-      if (selectedSection === 'ReadArticle') {
-          fetchArticles();
-      }
-  }, [selectedSection]);
+  const hardcodedArticles = [
+    { id: 1, title: "Understanding React Hooks", author: "John Doe", content: "This article explains React Hooks and how they can be used to manage state and side effects in functional components." },
+    { id: 2, title: "Introduction to Machine Learning", author: "Jane Smith", content: "A beginner's guide to machine learning, covering basic concepts and algorithms." },
+    { id: 3, title: "Advanced JavaScript Techniques", author: "Alice Johnson", content: "Explore advanced JavaScript techniques, including closures, promises, and async/await." },
+    { id: 4, title: "Getting Started with Flutter", author: "Bob Brown", content: "Learn how to get started with Flutter for building cross-platform mobile applications." },
+    { id: 5, title: "Understanding RESTful APIs", author: "Eve Davis", content: "This article covers the principles of RESTful APIs and how to use them for web services." },
+    { id: 6, title: "Introduction to Data Structures", author: "Tom Green", content: "An overview of fundamental data structures such as arrays, linked lists, stacks, and queues." },
+    { id: 7, title: "Modern Web Design Trends", author: "Nancy Lee", content: "Discover the latest trends in web design and how to create modern, user-friendly websites." },
+    { id: 8, title: "Getting Started with Node.js", author: "Steve Wilson", content: "A guide to getting started with Node.js for server-side development." },
+    { id: 9, title: "Basics of Database Management", author: "Sarah Martinez", content: "Learn the basics of database management systems, including SQL and NoSQL databases." },
+    { id: 10, title: "Exploring Internet of Things (IoT)", author: "David Clark", content: "An introduction to IoT, its applications, and how to build IoT solutions." }
+  ];
+ 
 
   
 
@@ -242,33 +243,12 @@ const handleDownloadCertificate = async (subject, user) => {
     };
 
 
-
-
-    const fetchArticles = async () => {
-      try {
-          const response = await axios.get(newsApiUrl);
-          setArticles(response.data.articles);
-      } catch (error) {
-          console.error('Error fetching articles:', error);
-          showMessage('Failed to fetch articles. Please try again.', 'error');
-      }
-  };
-
-  const fetchArticleContent = async (articleUrl) => {
-      try {
-          setSelectedArticle(null); // Clear selected article while fetching new data
-          // Search for related articles based on the selected article's title
-          const response = await axios.get(`https://newsapi.org/v2/everything?q=${encodeURIComponent(selectedArticle.title)}&apiKey=${newsApiKey}`);
-          setRelatedArticles(response.data.articles);
-          setSelectedArticle({
-              ...selectedArticle,
-              url: articleUrl
-          });
-      } catch (error) {
-          console.error('Error fetching article content:', error);
-          showMessage('Failed to fetch article content. Please try again.', 'error');
-      }
-  };
+    const handleArticleClick = (article) => {
+      setSelectedArticle(article);
+      // Mock related articles for demonstration
+      const related = hardcodedArticles.filter(a => a.id !== article.id);
+      setRelatedArticles(related);
+    };
 
 
   const renderContent = () => {
@@ -434,29 +414,39 @@ const handleDownloadCertificate = async (subject, user) => {
                             )}
                         </div>
                     );
+                    
                     case 'ReadArticle':
                       return (
-                          <div className="content-section">
-                              <h2>Read Latest News</h2>
-                              <div>
-                                  {articles.map((article, index) => (
-                                      <div key={index}>
-                                          <h3>{article.title}</h3>
-                                          <p>{article.description}</p>
-                                          <button onClick={() => fetchArticleContent(article.url)}>Read More</button>
-                                      </div>
-                                  ))}
-                              </div>
-                              {selectedArticle && (
-                                  <div>
-                                      <h2>{selectedArticle.title}</h2>
-                                      <p>{selectedArticle.content}</p>
-                                      <a href={selectedArticle.url} target="_blank" rel="noopener noreferrer">Read full article</a>
-                                  </div>
-                              )}
-                          </div>
+                        <div className="content-section">
+                          <h2>Read Articles</h2>
+                          {!selectedArticle ? (
+                            <>
+                              <h3>Available Articles:</h3>
+                              <ul>
+                                {hardcodedArticles.map((article) => (
+                                  <li key={article.id} className="article-item">
+                                    <h4 onClick={() => handleArticleClick(article)}>{article.title}</h4>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          ) : (
+                            <div className="article-details">
+                              <h3>{selectedArticle.title}</h3>
+                              <p>{selectedArticle.content}</p>
+                              <h4>Related Articles:</h4>
+                              <ul>
+                                {relatedArticles.map((relatedArticle) => (
+                                  <li key={relatedArticle.id} className="article-item">
+                                    <h5 onClick={() => handleArticleClick(relatedArticle)}>{relatedArticle.title}</h5>
+                                  </li>
+                                ))}
+                              </ul>
+                              <button onClick={() => setSelectedArticle(null)}>Back to Articles</button>
+                            </div>
+                          )}
+                        </div>
                       );
-                  
 
 
       default:
