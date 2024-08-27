@@ -6,19 +6,36 @@ import Jitsi from 'react-jitsi';
 
 
 const Dashboard = () => {
-    const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
-    const [username, setUsername] = useState('');
-    const [selectedSubject, setSelectedSubject] = useState('');
-    const [files, setFiles] = useState([]);
-    const [file, setFile] = useState(null);
-    const [authKey, setAuthKey] = useState('');
-    const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState('info'); // 'info', 'success', 'error'
-    const [submittedAssignments, setSubmittedAssignments] = useState([]);
-    const navigate = useNavigate();
-    const [isSessionJoined, setIsSessionJoined] = useState(false);
-    const [roomName, setRoomName] = useState(''); // This will be the room name for Jitsi
-    const [certificateSubject, setCertificateSubject] = useState('');
+  const [selectedSection, setSelectedSection] = useState('ViewCourseMaterials');
+  const [username, setUsername] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
+  const [authKey, setAuthKey] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('info'); // 'info', 'success', 'error'
+  const [submittedAssignments, setSubmittedAssignments] = useState([]);
+  const navigate = useNavigate();
+  const [isSessionJoined, setIsSessionJoined] = useState(false);
+  const [roomName, setRoomName] = useState(''); // This will be the room name for Jitsi
+  const [certificateSubject, setCertificateSubject] = useState('');
+  const [courseResults, setCourseResults] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [relatedArticles, setRelatedArticles] = useState([]);
+
+  // NewsAPI Configuration
+  const newsApiKey = '9bf1b1542d2c49f2a3e5758a86cfc80e'; // Replace with your NewsAPI key
+  const newsApiUrl = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=' + newsApiKey;
+
+  useEffect(() => {
+      if (selectedSection === 'Result') {
+          fetchResults();
+      }
+      if (selectedSection === 'ReadArticle') {
+          fetchArticles();
+      }
+  }, [selectedSection]);
 
   
 
@@ -123,7 +140,6 @@ const Dashboard = () => {
         }
       };
       
-    const [courseResults, setCourseResults] = useState([]);
 
 const fetchResults = async () => {
   try {
@@ -225,6 +241,36 @@ const handleDownloadCertificate = async (subject, user) => {
         navigate(`/${quizName}`, { state: { username } });
     };
 
+
+
+
+    const fetchArticles = async () => {
+      try {
+          const response = await axios.get(newsApiUrl);
+          setArticles(response.data.articles);
+      } catch (error) {
+          console.error('Error fetching articles:', error);
+          showMessage('Failed to fetch articles. Please try again.', 'error');
+      }
+  };
+
+  const fetchArticleContent = async (articleUrl) => {
+      try {
+          setSelectedArticle(null); // Clear selected article while fetching new data
+          // Search for related articles based on the selected article's title
+          const response = await axios.get(`https://newsapi.org/v2/everything?q=${encodeURIComponent(selectedArticle.title)}&apiKey=${newsApiKey}`);
+          setRelatedArticles(response.data.articles);
+          setSelectedArticle({
+              ...selectedArticle,
+              url: articleUrl
+          });
+      } catch (error) {
+          console.error('Error fetching article content:', error);
+          showMessage('Failed to fetch article content. Please try again.', 'error');
+      }
+  };
+
+
   const renderContent = () => {
     switch (selectedSection) {
       case 'ViewCourseMaterials':
@@ -276,7 +322,7 @@ const handleDownloadCertificate = async (subject, user) => {
                     <input type="file" name="file" />
                   </label>
                   <button type="submit" className="submit-button">Submit Assignment</button>
-                </form>
+                </form><br/>
                 <h3>Submitted Assignments:</h3>
                 <ul>
                   {submittedAssignments.map((assignment) => (
@@ -388,29 +434,31 @@ const handleDownloadCertificate = async (subject, user) => {
                             )}
                         </div>
                     );
+                    case 'ReadArticle':
+                      return (
+                          <div className="content-section">
+                              <h2>Read Latest News</h2>
+                              <div>
+                                  {articles.map((article, index) => (
+                                      <div key={index}>
+                                          <h3>{article.title}</h3>
+                                          <p>{article.description}</p>
+                                          <button onClick={() => fetchArticleContent(article.url)}>Read More</button>
+                                      </div>
+                                  ))}
+                              </div>
+                              {selectedArticle && (
+                                  <div>
+                                      <h2>{selectedArticle.title}</h2>
+                                      <p>{selectedArticle.content}</p>
+                                      <a href={selectedArticle.url} target="_blank" rel="noopener noreferrer">Read full article</a>
+                                  </div>
+                              )}
+                          </div>
+                      );
+                  
 
 
-      case 'RateCourse':
-        return (
-          <div className="content-section">
-            <h2>Rate Course</h2>
-            <form>
-              <label>
-                Course Title:
-                <input type="text" placeholder="Enter course title" />
-              </label>
-              <label>
-                Rating:
-                <input type="number" placeholder="Enter rating (1-5)" min="1" max="5" />
-              </label>
-              <label>
-                Feedback:
-                <textarea placeholder="Enter your feedback"></textarea>
-              </label>
-              <button type="submit" className="submit-rating-button">Submit Rating</button>
-            </form>
-          </div>
-        );
       default:
         return null;
     }
@@ -423,14 +471,14 @@ const handleDownloadCertificate = async (subject, user) => {
                 <h3>Welcome, {username}</h3>
             </div>
             <ul>
-                <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
-                <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
-                <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
-                <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
-                <li className={selectedSection === 'Result' ? 'active' : ''} onClick={() => setSelectedSection('Result')}>View Course Result</li>
+    <li className={selectedSection === 'ViewCourseMaterials' ? 'active' : ''} onClick={() => setSelectedSection('ViewCourseMaterials')}>View Course Materials</li>
+    <li className={selectedSection === 'SubmitAssignment' ? 'active' : ''} onClick={() => setSelectedSection('SubmitAssignment')}>Submit Assignment</li>
+    <li className={selectedSection === 'JoinLiveSession' ? 'active' : ''} onClick={() => setSelectedSection('JoinLiveSession')}>Join Live Session</li>
+    <li className={selectedSection === 'TakeQuiz' ? 'active' : ''} onClick={() => setSelectedSection('TakeQuiz')}>Take Quiz</li>
+    <li className={selectedSection === 'Result' ? 'active' : ''} onClick={() => setSelectedSection('Result')}>View Course Result</li>
+    <li className={selectedSection === 'ReadArticle' ? 'active' : ''} onClick={() => setSelectedSection('ReadArticle')}>Read Article</li>
+</ul>
 
-                <li className={selectedSection === 'RateCourse' ? 'active' : ''} onClick={() => setSelectedSection('RateCourse')}>Rate Course</li>
-            </ul>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
         <div className="content">
