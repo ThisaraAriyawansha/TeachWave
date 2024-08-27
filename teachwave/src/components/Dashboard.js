@@ -58,18 +58,6 @@ const Dashboard = () => {
       };
 
 
-      const handleGenerateCertificate = async (subject) => {
-        try {
-          const response = await axios.post('/generate-certificate', { subject });
-          const fileUrl = response.data.filePath;
-          showMessage('Certificate generated successfully', 'success');
-          // Open the certificate for download
-          window.open(`http://localhost:5000${fileUrl}`, '_blank');
-        } catch (error) {
-          showMessage('Error generating certificate', 'error');
-        }
-      };
-      
 
 
 
@@ -146,6 +134,28 @@ const fetchResults = async () => {
     showMessage('Failed to fetch course results. Please try again.', 'error');
   }
 };
+
+
+
+
+
+const handleDownloadCertificate = async (subject) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/download-certificate/${username}/${subject}`, {
+      responseType: 'blob', // Important for handling file downloads
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${subject}_Certificate.pdf`); // or whatever the file type is
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.error('Error downloading certificate:', error);
+    showMessage('Failed to download certificate. Please try again.', 'error');
+  }
+};
+
 
 
 
@@ -346,7 +356,7 @@ const fetchResults = async () => {
                   case 'Result':
                     return (
                       <div className="content-section">
-                        <h2>View Course Result</h2>
+                        <h2>View Course Results</h2>
                         {courseResults.length > 0 ? (
                           <table className="results-table">
                             <thead>
@@ -362,10 +372,8 @@ const fetchResults = async () => {
                                   <td>{result.subject}</td>
                                   <td>{result.score}</td>
                                   <td>
-                                    <button
-                                      onClick={() => handleGenerateCertificate(result.subject)}
-                                    >
-                                      Generate Certificate
+                                    <button className="download-button" onClick={() => handleDownloadCertificate(result.subject)}>
+                                      Download Certificate
                                     </button>
                                   </td>
                                 </tr>
@@ -373,7 +381,7 @@ const fetchResults = async () => {
                             </tbody>
                           </table>
                         ) : (
-                          <p>No results available.</p>
+                          <p>No results found.</p>
                         )}
                       </div>
                     );
