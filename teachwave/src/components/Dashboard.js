@@ -136,25 +136,26 @@ const fetchResults = async () => {
 };
 
 
-
-
-
-const handleDownloadCertificate = async (subject) => {
+const handleDownloadCertificate = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/download-certificate/${username}/${subject}`, {
-      responseType: 'blob', // Important for handling file downloads
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${subject}_Certificate.pdf`); // or whatever the file type is
-    document.body.appendChild(link);
-    link.click();
+      const response = await axios.get('http://localhost:5000/generate-certificate/Python/Thisara%20Ariyawansha', {
+          responseType: 'blob'
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Certificate.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
   } catch (error) {
-    console.error('Error downloading certificate:', error);
-    showMessage('Failed to download certificate. Please try again.', 'error');
+      console.error('Error downloading certificate:', error.response ? error.response.data : error.message);
+      alert('Failed to download certificate. Please try again.');
   }
 };
+
+
 
 
 
@@ -352,40 +353,41 @@ const handleDownloadCertificate = async (subject) => {
                       </div>
                   );
 
-
                   case 'Result':
                     return (
-                      <div className="content-section">
-                        <h2>View Course Results</h2>
-                        {courseResults.length > 0 ? (
-                          <table className="results-table">
-                            <thead>
-                              <tr>
-                                <th>Subject</th>
-                                <th>Score</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {courseResults.map((result) => (
-                                <tr key={result._id}>
-                                  <td>{result.subject}</td>
-                                  <td>{result.score}</td>
-                                  <td>
-                                    <button className="download-button" onClick={() => handleDownloadCertificate(result.subject)}>
-                                      Download Certificate
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        ) : (
-                          <p>No results found.</p>
-                        )}
-                      </div>
+                        <div className="content-section">
+                            <h2>View Course Results</h2>
+                            {courseResults.length > 0 ? (
+                                <table className="results-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Score</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {courseResults.map((result) => (
+                                            <tr key={result._id}>
+                                                <td>{result.subject}</td>
+                                                <td>{result.score}</td>
+                                                <td>
+                                                    <button
+                                                        className="download-button"
+                                                        onClick={() => handleDownloadCertificate(result.subject)}
+                                                    >
+                                                        Download Certificate
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <p>No results found.</p>
+                            )}
+                        </div>
                     );
-                  
 
 
       case 'RateCourse':

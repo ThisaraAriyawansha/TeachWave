@@ -252,30 +252,52 @@ app.get('/results/:username', async (req, res) => {
 });
 
 
-
-app.post('/generate-certificate', (req, res) => {
-  console.log('Received request to generate certificate');
-  const { subject } = req.body;
-
-  // Ensure the certificates directory exists
-  const certificatesDir = path.join(__dirname, 'certificates');
-  if (!fs.existsSync(certificatesDir)) {
+// Ensure the 'certificates' directory exists
+const certificatesDir = path.join(__dirname, 'certificates');
+if (!fs.existsSync(certificatesDir)){
     fs.mkdirSync(certificatesDir);
-  }
+}
 
-  const doc = new PDFDocument();
-  const filePath = path.join(certificatesDir, `certificate-${subject}.pdf`);
+// Endpoint to generate and download the certificate
+app.get('/generate-certificate/:subject/:username', (req, res) => {
+    const { subject, username } = req.params;
 
-  doc.pipe(fs.createWriteStream(filePath));
-  doc.fontSize(25).text('Certificate of Completion', { align: 'center' });
-  doc.fontSize(20).text(`Subject: ${subject}`, { align: 'center' });
-  doc.end();
+    console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
 
-  res.json({ filePath });
+    try {
+        // Create a PDF document
+        const doc = new PDFDocument();
+        const fileName = `Certificate-${username}-${subject}.pdf`;
+        const filePath = path.join(certificatesDir, fileName);
+
+        // Pipe the PDF into a file
+        doc.pipe(fs.createWriteStream(filePath));
+
+        // Add content to the PDF
+        doc.fontSize(25).text('Certificate of Completion', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(20).text(`This is to certify that`, { align: 'center' });
+        doc.fontSize(20).text(username, { align: 'center' });
+        doc.fontSize(20).text(`has successfully completed the`, { align: 'center' });
+        doc.fontSize(20).text(subject, { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(15).text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
+
+        // Finalize the PDF and end the stream
+        doc.end();
+
+        // Send the PDF as a response
+        res.download(filePath, (err) => {
+            if (err) {
+                console.error('Error sending file:', err);
+                res.status(500).send('Error generating certificate');
+            }
+        });
+    } catch (error) {
+        console.error('Error generating certificate:', error);
+        res.status(500).send('Error generating certificate');
+    }
 });
-
-
-
 
 // Start server
 app.listen(port, () => {
