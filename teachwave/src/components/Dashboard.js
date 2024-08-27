@@ -136,9 +136,9 @@ const fetchResults = async () => {
 };
 
 
-const handleDownloadCertificate = async () => {
+const handleDownloadCertificate = async (subject, user) => {
   try {
-      const response = await axios.get('http://localhost:5000/generate-certificate/Python/Thisara%20Ariyawansha', {
+      const response = await axios.get(`http://localhost:5000/generate-certificate/${subject}/${username}`, {
           responseType: 'blob'
       });
 

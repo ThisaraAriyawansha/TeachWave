@@ -251,6 +251,8 @@ app.get('/results/:username', async (req, res) => {
   }
 });
 
+
+
 // Ensure the 'certificates' directory exists
 const certificatesDir = path.join(__dirname, 'certificates');
 if (!fs.existsSync(certificatesDir)) {
@@ -258,96 +260,117 @@ if (!fs.existsSync(certificatesDir)) {
 }
 
 app.get('/generate-certificate/:subject/:username', (req, res) => {
-  const { subject, username } = req.params;
+    const { subject, username } = req.params;
 
-  console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
+    console.log(`Generating certificate for: Subject = ${subject}, Username = ${username}`);
 
-  try {
-      // Create a PDF document in landscape format
-      const doc = new PDFDocument({
-          size: [842, 595], // A4 landscape dimensions in points
-          margin: 50
-      });
-      const fileName = `Certificate-${username}-${subject}.pdf`;
-      const filePath = path.join(certificatesDir, fileName);
+    try {
+        // Create a PDF document in A4 landscape format
+        const doc = new PDFDocument({
+            size: [842, 595], // A4 landscape dimensions in points (297mm x 210mm)
+            margin: 50
+        });
 
-      // Pipe the PDF into a file
-      doc.pipe(fs.createWriteStream(filePath));
+        const fileName = `Certificate-${username}-${subject}.pdf`;
+        const filePath = path.join(certificatesDir, fileName);
 
-      // Add a background color
-      doc.rect(0, 0, 842, 595).fill('#f4f4f4');
+        // Pipe the PDF into a file
+        const writeStream = fs.createWriteStream(filePath);
+        doc.pipe(writeStream);
 
-      // Add a border around the certificate
-      doc.strokeColor('#4A90E2')
-         .lineWidth(5)
-         .rect(50, 50, 742, 495) // Draw a border
-         .stroke();
+        // Add a high-quality background image
+        const backgroundImagePath = path.join(__dirname, '2.png');
+        if (fs.existsSync(backgroundImagePath)) {
+            doc.image(backgroundImagePath, 0, 0, { width: 842, height: 595 });
+        } else {
+            console.error('Background image not found');
+        }
 
-      // Add a checkmark icon
-      doc.fillColor('#4A90E2')
-         .fontSize(32)
-         .text('✔', 50, 50); // Checkmark icon
+        // Add certificate header
+        doc.fillColor('#003366') // Dark blue
+           .fontSize(40)
+           .font('Times-Bold')
+           .text('Certificate of Completion', {
+               align: 'center',
+               underline: true
+           })
+           .moveDown(1);
 
-      // Add header text
-      doc.fillColor('#4A90E2')
-         .fontSize(32)
-         .font('Helvetica-Bold')
-         .text('TeachWave', { align: 'center' })
-         .moveDown(1);
+        // Add recipient name
+        doc.fillColor('#000000') // Black
+           .fontSize(28)
+           .font('Times-Roman')
+           .text('This is to certify that', {
+               align: 'center'
+           })
+           .moveDown(1);
 
-      // Certificate Title
-      doc.fillColor('#333333')
-         .fontSize(26)
-         .text('Certificate of Completion', { align: 'center' })
-         .moveDown(2);
+        doc.fontSize(36)
+           .font('Times-Bold')
+           .text(username, {
+               align: 'center',
+               underline: true
+           })
+           .moveDown(1);
 
-      // Certificate Content
-      doc.fontSize(20)
-         .text('This is to certify that', { align: 'center' })
-         .moveDown(1);
+        // Add course details
+        doc.fontSize(28)
+           .font('Times-Roman')
+           .text('has successfully completed the', {
+               align: 'center'
+           })
+           .moveDown(1);
 
-      doc.fontSize(24)
-         .text(username, { align: 'center', underline: true })
-         .moveDown(1);
+        doc.fontSize(30)
+           .font('Times-Bold')
+           .text(`${subject} Course`, {
+               align: 'center',
+               underline: true
+           })
+           .moveDown(2);
 
-      doc.fontSize(20)
-         .text('has successfully completed the', { align: 'center' })
-         .moveDown(1);
+        // Add issuing date
+        doc.fontSize(16)
+           .font('Times-Roman')
+           .text(`Issued on: ${new Date().toLocaleDateString()}`, {
+               align: 'center'
+           })
+           .moveDown(2);
 
-      doc.fontSize(24)
-         .text(subject, { align: 'center', underline: true })
-         .moveDown(3);
+        // Add issuing authority and system name at the bottom
+        doc.fontSize(16)
+           .fillColor('#003366')
+           .text('Issued by TeachWave', {
+               align: 'center'
+           })
+           .moveDown(1);
 
-      doc.fontSize(16)
-         .text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
+        // Finalize the PDF and end the stream
+        doc.end();
 
-      // Add footer with contact info
-      doc.fontSize(12)
-         .fillColor('#4A90E2')
-         .text('For more information, visit www.teachwave.com', 50, 550, { align: 'center' });
+        // Handle stream events for error and finish
+        writeStream.on('finish', () => {
+            res.download(filePath, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).send('Error generating certificate');
+                } else {
+                    console.log('Certificate sent successfully');
+                }
+            });
+        });
 
-      // Add a decorative line
-      doc.strokeColor('#4A90E2')
-         .lineWidth(2)
-         .moveTo(50, 500)
-         .lineTo(792, 500)
-         .stroke();
+        writeStream.on('error', (err) => {
+            console.error('Error writing PDF file:', err);
+            res.status(500).send('Error generating certificate');
+        });
 
-      // Finalize the PDF and end the stream
-      doc.end();
-
-      // Send the PDF as a response
-      res.download(filePath, (err) => {
-          if (err) {
-              console.error('Error sending file:', err);
-              res.status(500).send('Error generating certificate');
-          }
-      });
-  } catch (error) {
-      console.error('Error generating certificate:', error);
-      res.status(500).send('Error generating certificate');
-  }
+    } catch (error) {
+        console.error('Error generating certificate:', error);
+        res.status(500).send('Error generating certificate');
+    }
 });
+
 
 
 
