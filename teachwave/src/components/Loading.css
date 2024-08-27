@@ -5,71 +5,76 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: #ffffff; /* Light background for contrast */
-    font-family: 'Times New Roman', serif; /* Use Times New Roman font */
-    color: #333; /* Darker text for contrast */
+    background: #f9f9f9; /* Light grey background for a minimalist look */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* Apple's system font stack */
+    color: #333; /* Dark text for contrast */
     overflow: hidden;
     position: relative;
 }
 
-/* Background graphic with a Google color theme */
+/* Background graphic with a subtle gradient */
 .background-graphic {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #FF5722); /* Gradient with Google colors */
+    background: linear-gradient(135deg, #f0f0f5, #e0e0e5); /* Subtle gradient for a clean look */
     z-index: -1;
-    clip-path: ellipse(80% 70% at 50% 50%); /* Modern ellipse background effect */
-    filter: blur(10px); /* Blur effect for a more futuristic look */
+    filter: blur(8px); /* Softer blur effect */
 }
 
 /* Logo styling */
 .logo img {
-    width: 150px;
-    margin-bottom: 20px;
+    width: 170px; /* Increased logo size for better visibility */
+    margin-bottom: 30px; /* Increased margin for balance */
     border-radius: 50%;
-    border: 4px solid #4285F4; /* Google's blue for the border */
+    border: 2px solid #000; /* Dark border for a sophisticated look */
     padding: 8px;
-    /* Remove box-shadow */
+    background: #fff; /* White background to make the logo stand out */
 }
 
-/* Description section with modern text styling */
+/* Description section with elegant text styling */
 .description {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    padding: 0 20px; /* Padding for readability on smaller screens */
+}
+
+.description .icon {
+    font-size: 60px; /* Larger icon for visual impact */
+    color: #000; /* Dark color for the icon */
+    margin-bottom: 15px;
 }
 
 .description h1 {
-    font-size: 32px; /* Slightly larger heading for impact */
-    color: #4285F4; /* Google's blue for the heading */
+    font-size: 36px; /* Larger heading for emphasis */
+    color: #000; /* Dark text for the heading */
     margin-bottom: 15px;
-    /* Remove text-shadow */
 }
 
 .description p {
-    font-size: 20px;
-    color: #555; /* Dark gray for readability */
-    max-width: 600px;
-    line-height: 1.8;
+    font-size: 18px;
+    color: #666; /* Medium gray for improved readability */
+    max-width: 700px; /* Increased width for better text alignment */
+    line-height: 1.6;
 }
 
-/* Start button with a Google color theme */
+/* Start button with a sleek, minimal design */
 .start-button {
     padding: 14px 28px;
-    font-size: 20px;
-    background-color: #4285F4; /* Google's blue */
+    font-size: 18px;
+    background: linear-gradient(135deg, #007aff, #010c17); /* Apple Blue gradient */
     color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    /* Remove box-shadow */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
 }
 
 .start-button:hover {
-    background-color: #357ae8; /* Darker blue on hover */
+    background: linear-gradient(135deg, #0051a8, #003f8c); /* Darker blue gradient on hover */
     transform: scale(1.05); /* Slightly enlarge button on hover */
 }
 
@@ -81,26 +86,26 @@
 }
 
 .loading-bar {
-    width: 150px;
-    height: 15px;
-    background-color: #4285F4; /* Google's blue */
+    width: 180px; /* Slightly wider bar for better visibility */
+    height: 12px;
+    background: linear-gradient(135deg, #b0bec5, #90a4ae); /* Subtle blue-gray gradient */
     margin-bottom: 15px;
     animation: loading 2s infinite;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .loading-text {
     font-size: 20px;
-    color: #4285F4; /* Google's blue for loading text */
+    color: #000; /* Dark color for loading text */
     font-weight: bold; /* Bold text for emphasis */
 }
 
-/* Footer text with a modern touch */
+/* Footer text with a refined look */
 .footer-text {
-    margin-top: 20px;
-    font-size: 18px;
-    color: #4285F4; /* Google's blue */
-    /* Remove text-shadow */
+    margin-top: 30px;
+    font-size: 16px;
+    color: #333; /* Dark gray */
+    text-align: center; /* Center align text */
 }
 
 /* Keyframe animation for the loading bar */

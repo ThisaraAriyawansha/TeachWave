@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Loading.css'; 
 import logoImage from './image/man.avif'; // Import the image
+import { FaBookOpen } from 'react-icons/fa'; // Import Font Awesome icon
 
 const LoadingScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -21,12 +22,13 @@ const LoadingScreen = () => {
         <img src={logoImage} alt="TeachWave Logo" />
       </div>
       <div className="description">
+        <FaBookOpen className="icon" /> {/* Educational icon */}
         <h1>Welcome to TeachWave</h1>
-        <p>TeachWave is an online learning platform that offers interactive courses, quizzes, certifications, 
-            and live webinars, connecting students and instructors for a seamless learning experience....</p>
+        <p>TeachWave is a refined online learning platform offering interactive courses, quizzes, certifications, 
+           and live webinars, connecting students and instructors for an exceptional educational experience.</p>
       </div>
       {!loading ? (
-        <button onClick={handleStart} className="start-button">Start</button>
+        <button onClick={handleStart} className="start-button">Get Started</button>
       ) : (
         <div className="loading-container">
           <div className="loading-bar"></div>
@@ -34,7 +36,7 @@ const LoadingScreen = () => {
         </div>
       )}
       <div className="footer-text">
-        <p>Connecting learners and educators for a brighter future...</p>
+        <p>Empowering learners and educators for a brighter future...</p>
       </div>
     </div>
   );
