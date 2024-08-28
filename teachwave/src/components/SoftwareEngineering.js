@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './SoftwareEngineering.css'; // Rename or create a new CSS file if needed
+import './SoftwareEngineering.css'; 
 
 const SoftwareEngineeringQuiz = () => {
     const location = useLocation();
