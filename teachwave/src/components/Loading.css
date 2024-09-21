@@ -64,7 +64,7 @@
 .start-button {
     padding: 14px 28px;
     font-size: 18px;
-    background: linear-gradient(135deg, #007aff, #010c17); /* Apple Blue gradient */
+    background: linear-gradient(135deg, #0c3b6d, #010c17); /* Apple Blue gradient */
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -74,7 +74,7 @@
 }
 
 .start-button:hover {
-    background: linear-gradient(135deg, #0051a8, #003f8c); /* Darker blue gradient on hover */
+    background: linear-gradient(135deg, #0051a8, #052c5c); /* Darker blue gradient on hover */
     transform: scale(1.05); /* Slightly enlarge button on hover */
 }
 
